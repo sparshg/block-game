@@ -20,6 +20,7 @@ public class CamRotate : MonoBehaviour {
         transform.localPosition = new Vector3(
             Mathf.Sin(turn.x * Mathf.Deg2Rad), 0, Mathf.Cos(turn.x * Mathf.Deg2Rad)
         ) * -radius;
+
         transform.localRotation = Quaternion.Euler(-turn.y, turn.x, 0);
 
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, player.surfaceNormal);

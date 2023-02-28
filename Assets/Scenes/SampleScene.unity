@@ -169,7 +169,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cubePrefab: {fileID: 8954680457412467573, guid: f5abf45a114324bb98918ba811549286,
     type: 3}
-  size: 5
 --- !u!1 &146690147
 GameObject:
   m_ObjectHideFlags: 0
@@ -250,9 +249,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3eb71d6ba82a942eab56d5eca166eae5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  camFollow: {fileID: 146690148}
   surfaceNormal: {x: 0, y: 1, z: 0}
   primaryAxis: {x: 0, y: 0, z: 1}
   secondaryAxis: {x: 1, y: 0, z: 0}
+  rotateSpeed: 200
 --- !u!65 &264114005
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -638,6 +639,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2019936863}
+  - component: {fileID: 2019936864}
   m_Layer: 0
   m_Name: Environment
   m_TagString: Untagged
@@ -662,3 +664,16 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2019936864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2019936861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23e6de57c16ed44368e74cdcf4f8db6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  size: 5
