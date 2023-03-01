@@ -17,11 +17,13 @@ public class CamRotate : MonoBehaviour {
         turn.x %= 360;
         turn.y += Input.GetAxis("Mouse Y") * sensitivity;
         turn.y = Mathf.Clamp(turn.y, -70, -20);
-        transform.localPosition = new Vector3(
+
+        Quaternion rotation = Quaternion.FromToRotation(Vector3.up, player.surfaceNormal);
+        transform.localPosition = rotation * new Vector3(
             Mathf.Sin(turn.x * Mathf.Deg2Rad), 0, Mathf.Cos(turn.x * Mathf.Deg2Rad)
         ) * -radius;
 
-        transform.localRotation = Quaternion.Euler(-turn.y, turn.x, 0);
+        transform.localRotation = rotation * Quaternion.Euler(-turn.y, turn.x, 0);
 
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, player.surfaceNormal);
         if (player.surfaceNormal.x != 0) {

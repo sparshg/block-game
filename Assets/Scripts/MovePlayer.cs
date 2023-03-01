@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class MovePlayer : MonoBehaviour {
 
-    [SerializeField] private CamFollow camFollow;
     public Vector3 surfaceNormal = Vector3.up;
     public Vector3 primaryAxis = Vector3.forward, secondaryAxis = Vector3.right;
     [SerializeField] private float rotateSpeed;
 
     private bool isMoving = false;
 
-    void Start() {
-
+    void DrawGizmosSelected() {
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position, transform.position + primaryAxis);
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(transform.position, transform.position + secondaryAxis);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(transform.position, transform.position + surfaceNormal);
     }
 
     void Update() {
@@ -30,20 +34,20 @@ public class MovePlayer : MonoBehaviour {
 
     IEnumerator Roll(Vector3 anchor, Vector3 axis, Vector3 newNormal) {
         isMoving = true;
-        float angle = 90f, _angle = 0f;
+        float angle = 90f, _angle = 0f, _rotateSpeed = rotateSpeed;
         Vector3 belowCube = transform.position - surfaceNormal;
         Vector3 toVec = belowCube + newNormal;
 
         if (toVec.x == Pref.I.size || toVec.y == Pref.I.size || toVec.z == Pref.I.size || toVec.x < 0 || toVec.y < 0 || toVec.z < 0) {
             angle = 180f;
-            // StartCoroutine(camFollow.Rotate(axis, belowCube, rotateSpeed * 0.5f));
+            _rotateSpeed *= 2;
         } else {
             toVec += surfaceNormal;
         }
         while (true) {
-            _angle += rotateSpeed * Time.deltaTime;
+            _angle += _rotateSpeed * Time.deltaTime;
             if (_angle >= angle) break;
-            transform.RotateAround(anchor, axis, rotateSpeed * Time.deltaTime);
+            transform.RotateAround(anchor, axis, _rotateSpeed * Time.deltaTime);
             if (angle == 180f) surfaceNormal = (transform.position - belowCube).normalized;
             yield return null;
         }
