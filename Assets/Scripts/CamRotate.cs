@@ -27,29 +27,24 @@ public class CamRotate : MonoBehaviour {
 
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, player.surfaceNormal);
         if (player.surfaceNormal.x != 0) {
-            if (Mathf.Abs(forward.y) > Mathf.Abs(forward.z)) {
+            if (Mathf.Abs(forward.y) > Mathf.Abs(forward.z))
                 player.primaryAxis = Vector3.up * Mathf.Sign(forward.y);
-                player.secondaryAxis = -Vector3.forward * Mathf.Sign(forward.y);
-            } else {
+            else
                 player.primaryAxis = Vector3.forward * Mathf.Sign(forward.z);
-                player.secondaryAxis = Vector3.up * Mathf.Sign(forward.z);
-            }
+
         } else if (player.surfaceNormal.y != 0) {
-            if (Mathf.Abs(forward.x) > Mathf.Abs(forward.z)) {
+            if (Mathf.Abs(forward.x) > Mathf.Abs(forward.z))
                 player.primaryAxis = Vector3.right * Mathf.Sign(forward.x);
-                player.secondaryAxis = -Vector3.forward * Mathf.Sign(forward.x);
-            } else {
+            else
                 player.primaryAxis = Vector3.forward * Mathf.Sign(forward.z);
-                player.secondaryAxis = Vector3.right * Mathf.Sign(forward.z);
-            }
+
         } else if (player.surfaceNormal.z != 0) {
-            if (Mathf.Abs(forward.x) > Mathf.Abs(forward.y)) {
+            if (Mathf.Abs(forward.x) > Mathf.Abs(forward.y))
                 player.primaryAxis = Vector3.right * Mathf.Sign(forward.x);
-                player.secondaryAxis = -Vector3.up * Mathf.Sign(forward.x);
-            } else {
+            else
                 player.primaryAxis = Vector3.up * Mathf.Sign(forward.y);
-                player.secondaryAxis = Vector3.right * Mathf.Sign(forward.y);
-            }
+
         }
+        player.secondaryAxis = Vector3.Cross(player.surfaceNormal, player.primaryAxis);
     }
 }
