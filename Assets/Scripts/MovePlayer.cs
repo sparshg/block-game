@@ -10,11 +10,11 @@ public class MovePlayer : MonoBehaviour {
 
     private bool isMoving = false;
 
-    void DrawGizmosSelected() {
+    void OnDrawGizmosSelected() {
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(transform.position, transform.position + primaryAxis);
+        Gizmos.DrawLine(transform.position, transform.position + primaryAxis * 2f);
         Gizmos.color = Color.green;
-        Gizmos.DrawLine(transform.position, transform.position + secondaryAxis);
+        Gizmos.DrawLine(transform.position, transform.position + secondaryAxis * 2f);
         Gizmos.color = Color.blue;
         Gizmos.DrawLine(transform.position, transform.position + surfaceNormal);
     }

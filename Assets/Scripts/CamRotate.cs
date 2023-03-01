@@ -24,26 +24,21 @@ public class CamRotate : MonoBehaviour {
         ) * -radius;
 
         transform.localRotation = rotation * Quaternion.Euler(-turn.y, turn.x, 0);
-
-        Vector3 forward = Vector3.ProjectOnPlane(transform.forward, player.surfaceNormal);
         if (player.surfaceNormal.x != 0) {
-            if (Mathf.Abs(forward.y) > Mathf.Abs(forward.z))
-                player.primaryAxis = Vector3.up * Mathf.Sign(forward.y);
+            if (Mathf.Abs(transform.forward.y) > Mathf.Abs(transform.forward.z))
+                player.primaryAxis = Vector3.up * Mathf.Sign(transform.forward.y);
             else
-                player.primaryAxis = Vector3.forward * Mathf.Sign(forward.z);
-
+                player.primaryAxis = Vector3.forward * Mathf.Sign(transform.forward.z);
         } else if (player.surfaceNormal.y != 0) {
-            if (Mathf.Abs(forward.x) > Mathf.Abs(forward.z))
-                player.primaryAxis = Vector3.right * Mathf.Sign(forward.x);
+            if (Mathf.Abs(transform.forward.x) > Mathf.Abs(transform.forward.z))
+                player.primaryAxis = Vector3.right * Mathf.Sign(transform.forward.x);
             else
-                player.primaryAxis = Vector3.forward * Mathf.Sign(forward.z);
-
+                player.primaryAxis = Vector3.forward * Mathf.Sign(transform.forward.z);
         } else if (player.surfaceNormal.z != 0) {
-            if (Mathf.Abs(forward.x) > Mathf.Abs(forward.y))
-                player.primaryAxis = Vector3.right * Mathf.Sign(forward.x);
+            if (Mathf.Abs(transform.forward.x) > Mathf.Abs(transform.forward.y))
+                player.primaryAxis = Vector3.right * Mathf.Sign(transform.forward.x);
             else
-                player.primaryAxis = Vector3.up * Mathf.Sign(forward.y);
-
+                player.primaryAxis = Vector3.up * Mathf.Sign(transform.forward.y);
         }
         player.secondaryAxis = Vector3.Cross(player.surfaceNormal, player.primaryAxis);
     }

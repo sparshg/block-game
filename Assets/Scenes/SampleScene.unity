@@ -249,7 +249,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3eb71d6ba82a942eab56d5eca166eae5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camFollow: {fileID: 146690148}
   surfaceNormal: {x: 0, y: 1, z: 0}
   primaryAxis: {x: 0, y: 0, z: 1}
   secondaryAxis: {x: 1, y: 0, z: 0}
