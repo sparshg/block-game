@@ -26,7 +26,7 @@ public class CamRotate : MonoBehaviour {
             Mathf.Sin(turn.x * Mathf.Deg2Rad), 0, Mathf.Cos(turn.x * Mathf.Deg2Rad)
         ) * -radius;
 
-        transform.localRotation = rotation;
+        transform.localRotation = rotation * Quaternion.Euler(-turn.y, turn.x, 0);
         if (player.surfaceNormal.x != 0) {
             if (Mathf.Abs(transform.forward.y) > Mathf.Abs(transform.forward.z))
                 player.primaryAxis = Vector3.up * Mathf.Sign(transform.forward.y);

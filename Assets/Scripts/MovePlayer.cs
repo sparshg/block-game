@@ -58,7 +58,7 @@ public class MovePlayer : MonoBehaviour {
         if (angle == 180f) {
             surfaceNormal = newNormal;
         }
-        isMoving = false;
         yield return null;
+        isMoving = false;
     }
 }
