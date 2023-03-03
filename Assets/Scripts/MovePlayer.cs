@@ -7,14 +7,15 @@ public class MovePlayer : MonoBehaviour {
     public Vector3 surfaceNormal = Vector3.up;
     public Vector3 primaryAxis = Vector3.forward, secondaryAxis = Vector3.right;
     [SerializeField] private float rotateSpeed;
+    [SerializeField] private CamRotate cam;
 
     private bool isMoving = false;
 
     void OnDrawGizmosSelected() {
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(transform.position, transform.position + primaryAxis * 2f);
+        Gizmos.DrawLine(transform.position, transform.position + primaryAxis * 4f);
         Gizmos.color = Color.green;
-        Gizmos.DrawLine(transform.position, transform.position + secondaryAxis * 2f);
+        Gizmos.DrawLine(transform.position, transform.position + secondaryAxis * 4f);
         Gizmos.color = Color.blue;
         Gizmos.DrawLine(transform.position, transform.position + surfaceNormal);
     }
@@ -41,6 +42,7 @@ public class MovePlayer : MonoBehaviour {
         if (toVec.x == Pref.I.size || toVec.y == Pref.I.size || toVec.z == Pref.I.size || toVec.x < 0 || toVec.y < 0 || toVec.z < 0) {
             angle = 180f;
             _rotateSpeed *= 2;
+            cam.SetIntermediateRotation(surfaceNormal);
         } else {
             toVec += surfaceNormal;
         }
@@ -53,7 +55,9 @@ public class MovePlayer : MonoBehaviour {
         }
         transform.position = toVec;
         transform.rotation = Quaternion.identity;
-        if (angle == 180f) surfaceNormal = newNormal;
+        if (angle == 180f) {
+            surfaceNormal = newNormal;
+        }
         isMoving = false;
         yield return null;
     }

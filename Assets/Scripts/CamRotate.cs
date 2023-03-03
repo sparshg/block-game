@@ -7,9 +7,12 @@ public class CamRotate : MonoBehaviour {
     [SerializeField] private MovePlayer player;
     [SerializeField] private float radius;
     private Vector2 turn;
+    private Quaternion history = Quaternion.identity;
+    private Vector3 fromNormal = Vector3.up;
 
-    void Start() {
-
+    public void SetIntermediateRotation(Vector3 normal) {
+        history = Quaternion.FromToRotation(fromNormal, normal) * history;
+        fromNormal = normal;
     }
 
     void Update() {
@@ -18,12 +21,12 @@ public class CamRotate : MonoBehaviour {
         turn.y += Input.GetAxis("Mouse Y") * sensitivity;
         turn.y = Mathf.Clamp(turn.y, -70, -20);
 
-        Quaternion rotation = Quaternion.FromToRotation(Vector3.up, player.surfaceNormal);
+        Quaternion rotation = Quaternion.FromToRotation(fromNormal, player.surfaceNormal) * history;
         transform.localPosition = rotation * new Vector3(
             Mathf.Sin(turn.x * Mathf.Deg2Rad), 0, Mathf.Cos(turn.x * Mathf.Deg2Rad)
         ) * -radius;
 
-        transform.localRotation = rotation * Quaternion.Euler(-turn.y, turn.x, 0);
+        transform.localRotation = rotation;
         if (player.surfaceNormal.x != 0) {
             if (Mathf.Abs(transform.forward.y) > Mathf.Abs(transform.forward.z))
                 player.primaryAxis = Vector3.up * Mathf.Sign(transform.forward.y);
