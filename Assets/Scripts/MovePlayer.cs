@@ -10,6 +10,8 @@ public class MovePlayer : MonoBehaviour {
     [SerializeField] private CamRotate cam;
 
     private bool isMoving = false;
+    // private Vector3 lockPrimAxis, lockSecAxis;
+    // private KeyCode lockKey;
 
     void OnDrawGizmosSelected() {
         Gizmos.color = Color.red;
@@ -31,6 +33,7 @@ public class MovePlayer : MonoBehaviour {
         } else if (Input.GetKey(KeyCode.LeftArrow)) {
             StartCoroutine(Roll(transform.position - secondaryAxis * 0.5f - surfaceNormal * 0.5f, primaryAxis, -secondaryAxis));
         }
+
     }
 
     IEnumerator Roll(Vector3 anchor, Vector3 axis, Vector3 newNormal) {
@@ -43,6 +46,11 @@ public class MovePlayer : MonoBehaviour {
             angle = 180f;
             _rotateSpeed *= 2;
             cam.SetIntermediateRotation(surfaceNormal);
+            // Quaternion rotation = Quaternion.FromToRotation(surfaceNormal, newNormal);
+            // lockPrimAxis = rotation * lockPrimAxis;
+            // lockPrimAxis = new Vector3(Mathf.Round(lockPrimAxis.x), Mathf.Round(lockPrimAxis.y), Mathf.Round(lockPrimAxis.z));
+            // lockSecAxis = rotation * lockSecAxis;
+            // lockSecAxis = new Vector3(Mathf.Round(lockSecAxis.x), Mathf.Round(lockSecAxis.y), Mathf.Round(lockSecAxis.z));
         } else {
             toVec += surfaceNormal;
         }
@@ -55,10 +63,53 @@ public class MovePlayer : MonoBehaviour {
         }
         transform.position = toVec;
         transform.rotation = Quaternion.identity;
-        if (angle == 180f) {
+        if (angle == 180f)
             surfaceNormal = newNormal;
-        }
+
         yield return null;
         isMoving = false;
     }
+
+    //     void keysPriorityControls() {
+
+    //         if (Input.GetKeyUp(KeyCode.UpArrow) && lockKey == KeyCode.UpArrow) {
+    //             lockKey = KeyCode.None;
+    //             lockPrimAxis = Vector3.zero;
+    //         } else if (Input.GetKeyUp(KeyCode.DownArrow) && lockKey == KeyCode.DownArrow) {
+    //             lockKey = KeyCode.None;
+    //             lockPrimAxis = Vector3.zero;
+    //         } else if (Input.GetKeyUp(KeyCode.RightArrow) && lockKey == KeyCode.RightArrow) {
+    //             lockKey = KeyCode.None;
+    //             lockPrimAxis = Vector3.zero;
+    //         } else if (Input.GetKeyUp(KeyCode.LeftArrow) && lockKey == KeyCode.LeftArrow) {
+    //             lockKey = KeyCode.None;
+    //             lockPrimAxis = Vector3.zero;
+    //         }
+
+    //         if (Input.GetKeyDown(KeyCode.UpArrow)) {
+    //             lockKey = KeyCode.UpArrow;
+    //         } else if (Input.GetKeyDown(KeyCode.DownArrow)) {
+    //             lockKey = KeyCode.DownArrow;
+    //         } else if (Input.GetKeyDown(KeyCode.RightArrow)) {
+    //             lockKey = KeyCode.RightArrow;
+    //         } else if (Input.GetKeyDown(KeyCode.LeftArrow)) {
+    //             lockKey = KeyCode.LeftArrow;
+    //         }
+    //         if (isMoving) return;
+
+    //         if (lockPrimAxis == Vector3.zero) {
+    //             lockPrimAxis = primaryAxis; lockSecAxis = secondaryAxis;
+    //         }
+
+    //         if (lockKey == KeyCode.UpArrow) {
+    //             StartCoroutine(Roll(transform.position + lockPrimAxis * 0.5f - surfaceNormal * 0.5f, lockSecAxis, lockPrimAxis));
+    //         } else if (lockKey == KeyCode.DownArrow) {
+    //             StartCoroutine(Roll(transform.position - lockPrimAxis * 0.5f - surfaceNormal * 0.5f, -lockSecAxis, -lockPrimAxis));
+    //         } else if (lockKey == KeyCode.RightArrow) {
+    //             StartCoroutine(Roll(transform.position + lockSecAxis * 0.5f - surfaceNormal * 0.5f, -lockPrimAxis, lockSecAxis));
+    //         } else if (lockKey == KeyCode.LeftArrow) {
+    //             StartCoroutine(Roll(transform.position - lockSecAxis * 0.5f - surfaceNormal * 0.5f, lockPrimAxis, -lockSecAxis));
+    //         }
+
+    //     }
 }
