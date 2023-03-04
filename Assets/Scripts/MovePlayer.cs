@@ -6,6 +6,7 @@ public class MovePlayer : MonoBehaviour {
 
     public Vector3 surfaceNormal = Vector3.up;
     public Vector3 primaryAxis = Vector3.forward, secondaryAxis = Vector3.right;
+    [SerializeField] private AnimationCurve rotateCurve;
     [SerializeField] private float rotateSpeed;
     [SerializeField] private CamRotate cam;
 
@@ -38,26 +39,23 @@ public class MovePlayer : MonoBehaviour {
 
     IEnumerator Roll(Vector3 anchor, Vector3 axis, Vector3 newNormal) {
         isMoving = true;
-        float angle = 90f, _angle = 0f, _rotateSpeed = rotateSpeed;
+        float angle = 90f, _angle = 0f, _rotateSpeed = rotateSpeed, t1 = rotateCurve.Evaluate(0), t;
         Vector3 belowCube = transform.position - surfaceNormal;
         Vector3 toVec = belowCube + newNormal;
 
         if (toVec.x == Pref.I.size || toVec.y == Pref.I.size || toVec.z == Pref.I.size || toVec.x < 0 || toVec.y < 0 || toVec.z < 0) {
             angle = 180f;
-            _rotateSpeed *= 2;
+            _rotateSpeed *= 2f;
             cam.SetIntermediateRotation(surfaceNormal);
-            // Quaternion rotation = Quaternion.FromToRotation(surfaceNormal, newNormal);
-            // lockPrimAxis = rotation * lockPrimAxis;
-            // lockPrimAxis = new Vector3(Mathf.Round(lockPrimAxis.x), Mathf.Round(lockPrimAxis.y), Mathf.Round(lockPrimAxis.z));
-            // lockSecAxis = rotation * lockSecAxis;
-            // lockSecAxis = new Vector3(Mathf.Round(lockSecAxis.x), Mathf.Round(lockSecAxis.y), Mathf.Round(lockSecAxis.z));
         } else {
             toVec += surfaceNormal;
         }
         while (true) {
             _angle += _rotateSpeed * Time.deltaTime;
+            t = rotateCurve.Evaluate(_angle / angle);
             if (_angle >= angle) break;
-            transform.RotateAround(anchor, axis, _rotateSpeed * Time.deltaTime);
+            transform.RotateAround(anchor, axis, (t - t1) * angle);
+            t1 = t;
             if (angle == 180f) surfaceNormal = (transform.position - belowCube).normalized;
             yield return null;
         }
