@@ -200,7 +200,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 264114004}
   elevation: 2
-  followSpeed: 5
+  followSpeed: 10
 --- !u!4 &146690149
 Transform:
   m_ObjectHideFlags: 0
