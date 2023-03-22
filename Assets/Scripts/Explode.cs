@@ -54,9 +54,11 @@ public class Explode : MonoBehaviour {
                 );
             }
         }
-        // if (explode) {
-        //     StartCoroutine(Explosion(children, normal, primaryAxis, secondaryAxis));
-        // }
+        if (explode) {
+            StartCoroutine(Explosion(children, normal, primaryAxis, secondaryAxis));
+        }
+    }
+    IEnumerator Explosion(Transform[] children, Vector3 normal, Vector3 primaryAxis, Vector3 secondaryAxis) {
         int best = 0;
         Vector3 bestChild = Vector3.zero;
 
@@ -68,34 +70,54 @@ public class Explode : MonoBehaviour {
             }
         }
 
-        // Cache Paths
-        PathCreator[] pathCreators = new PathCreator[children.Length];
-
-        // Set path for each grid block
+        // Cache Rigidbody
+        Rigidbody[] rbs = new Rigidbody[children.Length];
         for (int i = 0; i < children.Length; i++) {
-            Vector2 r = Random.insideUnitCircle;
-            Vector3[] waypoints = new Vector3[4];
-            waypoints[0] = children[i].localPosition;
-            waypoints[1] = bestChild;
-            waypoints[2] = bestChild + 2f * normal + 1.5f * (primaryAxis * r.x + secondaryAxis * r.y);
-            waypoints[3] = bestChild + 4f * normal + 2f * (primaryAxis * r.x + secondaryAxis * r.y);
-            pathCreators[i] = children[i].gameObject.GetComponent<PathCreator>();
-            pathCreators[i].bezierPath = new BezierPath(waypoints, false, PathSpace.xyz);
+            rbs[i] = children[i].gameObject.GetComponent<Rigidbody>();
+            rbs[i].isKinematic = false;
+            rbs[i].AddForce(normal * 10f * Time.deltaTime, ForceMode.Impulse);
         }
 
-        // Follow path for each grid block
-        float t = 0, y = 0;
-        while (t < 1) {
-            t += explosionSpeed * Time.deltaTime;
-            y = explosionCurve.Evaluate(t);
-            foreach (var pc in pathCreators) {
-                transform.position = pc.path.GetPointAtDistance(y, EndOfPathInstruction.Stop);
-                // transform.rotation = pc.path.GetRotationAtDistance(y, EndOfPathInstruction.Stop);
+        bool loop = true;
+        while (loop) {
+            loop = false;
+            for (int i = 0; i < children.Length; i++) {
+                if (Vector3.Dot(normal, children[i].localPosition) >= Vector3.Dot(normal, bestChild)) {
+                    loop = true;
+                } else if (rbs[i].drag == 0) {
+                    rbs[i].drag = 1;
+                    rbs[i].AddForce((normal * 10f + primaryAxis * Random.Range(-3f, 3f) + secondaryAxis * Random.Range(-3f, 3f)) * Time.deltaTime, ForceMode.Impulse);
+                }
             }
             yield return null;
         }
-    }
 
-    // IEnumerator Explosion(Transform[] children, Vector3 normal, Vector3 primaryAxis, Vector3 secondaryAxis) {
-    // }
+        // Cache Paths
+        // PathCreator[] pathCreators = new PathCreator[children.Length];
+
+        // Set path for each grid block
+        // for (int i = 0; i < 1; i++) {
+        //     Vector2 r = Random.insideUnitCircle;
+        //     Vector3[] waypoints = new Vector3[4];
+        //     waypoints[0] = children[i].localPosition;
+        //     waypoints[1] = bestChild;
+        //     waypoints[2] = bestChild + 2f * normal + 1.5f * (primaryAxis * r.x + secondaryAxis * r.y);
+        //     waypoints[3] = bestChild + 4f * normal + 2f * (primaryAxis * r.x + secondaryAxis * r.y);
+        //     pathCreators[i] = children[i].gameObject.GetComponent<PathCreator>();
+        //     pathCreators[i].bezierPath = new BezierPath(waypoints, false, PathSpace.xyz);
+        // }
+
+        // Follow path for each grid block
+        // float t = 0, y = 0;
+        // while (t < 1) {
+        //     t += explosionSpeed * Time.deltaTime;
+        //     y = explosionCurve.Evaluate(t);
+        //     for (int i = 0; i < children.Length; i++) {
+        //         children[i].localPosition = pathCreators[i].path.GetPointAtDistance(y, EndOfPathInstruction.Stop);
+        //         children[i].localRotation = pathCreators[i].path.GetRotationAtDistance(y, EndOfPathInstruction.Stop);
+        //         // transform.rotation = pc.path.GetRotationAtDistance(y, EndOfPathInstruction.Stop);
+        //     }
+        // yield return null;
+        // }
+    }
 }
