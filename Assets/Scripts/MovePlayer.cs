@@ -14,6 +14,18 @@ public class MovePlayer : MonoBehaviour {
     // private Vector3 lockPrimAxis, lockSecAxis;
     // private KeyCode lockKey;
 
+    void OnGUI() {
+        if (GUI.Button(new Rect(0, 20, 100, 20), "Burst")) {
+            StartCoroutine(Burst());
+        }
+    }
+
+    IEnumerator Burst() {
+        yield return new WaitForSeconds(2f);
+        Instantiate(Resources.Load("Burst"), transform.position, Quaternion.identity);
+        gameObject.SetActive(false);
+    }
+
     void OnDrawGizmosSelected() {
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position, transform.position + primaryAxis * 4f);
