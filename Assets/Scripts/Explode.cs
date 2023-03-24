@@ -10,7 +10,7 @@ public class Explode : MonoBehaviour {
     [SerializeField][Range(0.0f, 0.1f)] private float shakeIntervals = 0.02f;
     [SerializeField][Range(0, 200)] private int shakeCount = 50;
     [SerializeField] private AnimationCurve explosionCurve;
-    [SerializeField] private float explosionSpeed;
+    [SerializeField] private float explosionSpeed1, explosionSpeed2, explosionRotation, explosionDrag;
 
     Transform[] children;
     private MovePlayer player;
@@ -32,9 +32,9 @@ public class Explode : MonoBehaviour {
         Vector3 primaryAxis = player.primaryAxis;
         Vector3 secondaryAxis = player.secondaryAxis;
         var children = grid.GetComponentsInChildren<Transform>().Where(t => {
-            if (normal.x == 1) {
+            if (normal.x == 1 || normal.x == -1) {
                 return t.localPosition.y == toShake.x && t.localPosition.z == toShake.y;
-            } else if (normal.y == 1) {
+            } else if (normal.y == 1 || normal.y == -1) {
                 return t.localPosition.x == toShake.x && t.localPosition.z == toShake.y;
             } else {
                 return t.localPosition.x == toShake.x && t.localPosition.y == toShake.y;
@@ -75,20 +75,23 @@ public class Explode : MonoBehaviour {
         for (int i = 0; i < children.Length; i++) {
             rbs[i] = children[i].gameObject.GetComponent<Rigidbody>();
             rbs[i].isKinematic = false;
-            rbs[i].AddForce(normal * 10f * Time.deltaTime, ForceMode.Impulse);
+            rbs[i].AddForce(normal * explosionSpeed1, ForceMode.Impulse);
         }
 
         bool loop = true;
         while (loop) {
             loop = false;
             for (int i = 0; i < children.Length; i++) {
-                if (Vector3.Dot(normal, children[i].localPosition) >= Vector3.Dot(normal, bestChild)) {
+                if (Vector3.Dot(normal, bestChild - children[i].localPosition) >= 0) {
                     loop = true;
                 } else if (rbs[i].drag == 0) {
-                    rbs[i].drag = 1;
-                    rbs[i].AddForce((normal * 10f + primaryAxis * Random.Range(-3f, 3f) + secondaryAxis * Random.Range(-3f, 3f)) * Time.deltaTime, ForceMode.Impulse);
+                    rbs[i].drag = explosionDrag;
+                    rbs[i].AddForce((primaryAxis * Random.Range(-1f, 1f) + secondaryAxis * Random.Range(-1f, 1f)) * explosionSpeed2, ForceMode.Impulse);
+                    rbs[i].rotation = Random.rotation;
+                    rbs[i].AddTorque(Random.insideUnitSphere * explosionRotation, ForceMode.Impulse);
                 }
             }
+            Debug.Log("Updating");
             yield return null;
         }
 

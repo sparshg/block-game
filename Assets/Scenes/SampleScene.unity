@@ -742,4 +742,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  explosionSpeed: 1
+  explosionSpeed1: 50
+  explosionSpeed2: 40
+  explosionRotation: 2
+  explosionDrag: 4
