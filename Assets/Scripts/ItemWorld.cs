@@ -1,9 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering.LWRP;
 using TMPro;
-using CodeMonkey.Utils;
 
 public class ItemWorld : MonoBehaviour {
 
@@ -17,7 +15,7 @@ public class ItemWorld : MonoBehaviour {
     }
 
     public static ItemWorld DropItem(Vector3 dropPosition, Item item) {
-        Vector3 randomDir = UtilsClass.GetRandomDir();
+        Vector3 randomDir = Random.onUnitSphere;
         ItemWorld itemWorld = SpawnItemWorld(dropPosition + randomDir * 8f, item);
         itemWorld.GetComponent<Rigidbody2D>().AddForce(randomDir * 40f, ForceMode2D.Impulse);
         return itemWorld;

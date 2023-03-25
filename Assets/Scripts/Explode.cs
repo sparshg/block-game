@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using PathCreation;
 using UnityEngine;
@@ -9,10 +10,18 @@ public class Explode : MonoBehaviour {
     [SerializeField][Range(0.0f, 0.3f)] private float shakeAmount = 0.1f;
     [SerializeField][Range(0.0f, 0.1f)] private float shakeIntervals = 0.02f;
     [SerializeField][Range(0, 200)] private int shakeCount = 50;
-    [SerializeField] private AnimationCurve explosionCurve;
-    [SerializeField] private float explosionSpeed1, explosionSpeed2, explosionRotation, explosionDrag;
+    [SerializeField] private AnimationCurve rebuildCurve;
+    [SerializeField] private float explosionSpeed1, explosionSpeed2, explosionRotation, explosionDrag, rebuildSpeed;
 
-    Transform[] children;
+    List<Transform>[] detachedCubes = new List<Transform>[6];
+    Dictionary<Vector3, int> map = new Dictionary<Vector3, int>() {
+        {Vector3.right, 0},
+        {Vector3.left, 1},
+        {Vector3.up, 2},
+        {Vector3.down, 3},
+        {Vector3.forward, 4},
+        {Vector3.back, 5}
+    };
     private MovePlayer player;
 
     void OnGUI() {
@@ -28,6 +37,11 @@ public class Explode : MonoBehaviour {
     }
     void Awake() {
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<MovePlayer>();
+    }
+    void Start() {
+        for (int i = 0; i < 6; i++) {
+            detachedCubes[i] = new List<Transform>();
+        }
     }
     IEnumerator Shake(bool explode) {
         Vector2 toShake = new Vector2(Random.Range(1, Pref.I.size - 1), Random.Range(1, Pref.I.size - 1));
@@ -72,20 +86,36 @@ public class Explode : MonoBehaviour {
                 maxChild = child.localPosition;
             }
         }
-
         minChild = maxChild - normal * (Pref.I.size - 1);
 
         // Cache Rigidbody
         Rigidbody[] rbs = new Rigidbody[children.Length];
+        GameObject[] pc = new GameObject[children.Length];
+        Vector3[][] way = new Vector3[children.Length][];
         for (int i = 0; i < children.Length; i++) {
             rbs[i] = children[i].gameObject.GetComponent<Rigidbody>();
             rbs[i].isKinematic = false;
             // if closer to minChild
             if (Vector3.Dot(-normal, minChild - children[i].localPosition) < Vector3.Dot(normal, maxChild - children[i].localPosition)) {
                 rbs[i].AddForce(-normal * explosionSpeed1, ForceMode.Impulse);
+                detachedCubes[map[-normal]].AddRange(children);
+                if (children[i].localPosition != minChild) {
+                    way[i] = new Vector3[3];
+                    way[i][1] = minChild;
+                } else {
+                    way[i] = new Vector3[2];
+                }
             } else {
                 rbs[i].AddForce(normal * explosionSpeed1, ForceMode.Impulse);
+                detachedCubes[map[normal]].AddRange(children);
+                if (children[i].localPosition != maxChild) {
+                    way[i] = new Vector3[3];
+                    way[i][1] = maxChild;
+                } else {
+                    way[i] = new Vector3[2];
+                }
             }
+            way[i][0] = children[i].localPosition;
         }
 
         bool loop = true;
@@ -105,5 +135,56 @@ public class Explode : MonoBehaviour {
             }
             yield return null;
         }
+        yield return new WaitForSeconds(2f);
+        for (int i = 0; i < children.Length; i++) {
+            way[i][way[i].Length - 1] = children[i].localPosition;
+            children[i].gameObject.GetComponent<BoxCollider>().enabled = false;
+            rbs[i].isKinematic = true;
+            pc[i] = new GameObject();
+            pc[i].SetActive(false);
+            var path = pc[i].AddComponent<PathCreator>().bezierPath = new BezierPath(way[i], false, PathSpace.xyz);
+            path.ControlPointMode = BezierPath.ControlMode.Free;
+            if (path.NumAnchorPoints > 2) {
+                path.SetPoint(1, (way[i][0] + way[i][1]) * 0.5f);
+                path.SetPoint(2, (way[i][0] + way[i][1]) * 0.5f);
+                path.SetPoint(4, way[i][1] + normal * Vector3.Dot(way[i][2] - way[i][1], normal) * 0.5f);
+            } else {
+                path.SetPoint(1, way[i][0] + normal * Vector3.Dot(way[i][1] - way[i][0], normal) * 0.5f);
+                path.SetPoint(2, path.GetPoint(1));
+            }
+        }
+
+        float t = 1;
+        bool finished = false;
+        while (t >= 0) {
+            for (int i = 0; i < children.Length; i++) {
+                var pathCreator = pc[i].GetComponent<PathCreator>();
+                children[i].position = pathCreator.path.GetPointAtTime(rebuildCurve.Evaluate(t), EndOfPathInstruction.Stop);
+                children[i].rotation = pathCreator.path.GetRotation(rebuildCurve.Evaluate(t), EndOfPathInstruction.Stop);
+            }
+            yield return null;
+            t -= rebuildSpeed * Time.deltaTime;
+            if (t < 0 && !finished) {
+                t = 0;
+                finished = true;
+            }
+        }
+        foreach (var child in children) {
+            child.localPosition = new Vector3(
+                Mathf.RoundToInt(child.localPosition.x),
+                Mathf.RoundToInt(child.localPosition.y),
+                Mathf.RoundToInt(child.localPosition.z)
+            );
+        }
+        foreach (var p in pc) Destroy(p);
+    }
+
+    IEnumerator Rebuild() {
+        var children = grid.GetComponentsInChildren<Transform>().Where(t => t != transform).ToArray();
+        foreach (var child in children) {
+            Destroy(child.gameObject);
+        }
+        // grid.Generate();
+        yield return null;
     }
 }

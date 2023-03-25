@@ -22,7 +22,7 @@ public class MovePlayer : MonoBehaviour {
 
     IEnumerator Burst() {
         yield return new WaitForSeconds(2f);
-        Instantiate(Resources.Load("Burst"), transform.position, Quaternion.identity);
+        Instantiate(Resources.Load("Burst"), transform.position, Quaternion.FromToRotation(Vector3.up, surfaceNormal));
         gameObject.SetActive(false);
     }
 
