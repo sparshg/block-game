@@ -6,7 +6,7 @@ public class CamRotate : MonoBehaviour {
     [SerializeField] private float sensitivity;
     [SerializeField] private MovePlayer player;
     [SerializeField] private float radius;
-    private Vector2 turn;
+    public Vector2 turn;
     private Quaternion history = Quaternion.identity;
     private Vector3 fromNormal = Vector3.up;
 
@@ -16,10 +16,12 @@ public class CamRotate : MonoBehaviour {
     }
 
     void Update() {
-        turn.x += Input.GetAxis("Mouse X") * sensitivity;
-        turn.x %= 360;
-        turn.y += Input.GetAxis("Mouse Y") * sensitivity;
-        turn.y = Mathf.Clamp(turn.y, -60, 30);
+        if (player.controls == Controls.MousePriority) {
+            turn.x += Input.GetAxis("Mouse X") * sensitivity;
+            turn.x %= 360;
+            turn.y += Input.GetAxis("Mouse Y") * sensitivity;
+            turn.y = Mathf.Clamp(turn.y, -60, 30);
+        }
 
         Quaternion rotation = Quaternion.FromToRotation(fromNormal, player.surfaceNormal) * history;
         transform.localPosition = rotation * new Vector3(

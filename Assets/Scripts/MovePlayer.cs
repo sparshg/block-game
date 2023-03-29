@@ -1,18 +1,43 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
+
+public enum Controls {
+    MousePriority,
+    KeyboardPriority
+}
 
 public class MovePlayer : MonoBehaviour {
+    [ReadOnly] public Vector3 surfaceNormal = Vector3.up;
+    [ReadOnly] public Vector3 primaryAxis = Vector3.forward;
+    [ReadOnly] public Vector3 secondaryAxis = Vector3.right;
+    // private KeyCode lockKey = KeyCode.None;
+    // private Vector3 lockPrimAxis, lockSecAxis, lockNormal;
 
-    public Vector3 surfaceNormal = Vector3.up;
-    public Vector3 primaryAxis = Vector3.forward, secondaryAxis = Vector3.right;
+    [Header("Keys")]
+    [SerializeField] private KeyCode upKey;
+    [SerializeField] private KeyCode downKey;
+    [SerializeField] private KeyCode leftKey;
+    [SerializeField] private KeyCode rightKey;
+    [SerializeField] private KeyCode leftRot;
+    [SerializeField] private KeyCode rightRot;
+    [SerializeField] private KeyCode upRot;
+    [SerializeField] private KeyCode downRot;
+    public Controls controls;
+
+    [Header("Initialize")]
+    [SerializeField] private Vector2 startingPos;
+
+    [Header("Movement")]
     [SerializeField] private AnimationCurve rotateCurve;
     [SerializeField] private float rotateSpeed;
+    [Header("Camera")]
+    [SerializeField] private float camRotateSpeed;
     [SerializeField] private CamRotate cam;
+    private float toAngleX, toAngleY;
 
     private bool isMoving = false;
-    // private Vector3 lockPrimAxis, lockSecAxis;
-    // private KeyCode lockKey;
 
     void OnGUI() {
         if (GUI.Button(new Rect(0, 20, 100, 20), "Burst")) {
@@ -35,18 +60,15 @@ public class MovePlayer : MonoBehaviour {
         Gizmos.DrawLine(transform.position, transform.position + surfaceNormal);
     }
 
-    void Update() {
-        if (isMoving) return;
-        if (Input.GetKey(KeyCode.UpArrow)) {
-            StartCoroutine(Roll(transform.position + primaryAxis * 0.5f - surfaceNormal * 0.5f, secondaryAxis, primaryAxis));
-        } else if (Input.GetKey(KeyCode.DownArrow)) {
-            StartCoroutine(Roll(transform.position - primaryAxis * 0.5f - surfaceNormal * 0.5f, -secondaryAxis, -primaryAxis));
-        } else if (Input.GetKey(KeyCode.RightArrow)) {
-            StartCoroutine(Roll(transform.position + secondaryAxis * 0.5f - surfaceNormal * 0.5f, -primaryAxis, secondaryAxis));
-        } else if (Input.GetKey(KeyCode.LeftArrow)) {
-            StartCoroutine(Roll(transform.position - secondaryAxis * 0.5f - surfaceNormal * 0.5f, primaryAxis, -secondaryAxis));
-        }
+    void Start() {
+        transform.localPosition = new Vector3(startingPos.x, Pref.I.size, startingPos.y);
+    }
 
+    void Update() {
+        if (controls == Controls.KeyboardPriority) {
+            keysPriorityControls();
+        } else
+            mousePriorityControls();
     }
 
     IEnumerator Roll(Vector3 anchor, Vector3 axis, Vector3 newNormal) {
@@ -80,46 +102,104 @@ public class MovePlayer : MonoBehaviour {
         isMoving = false;
     }
 
-    //     void keysPriorityControls() {
+    void keysPriorityControls() {
+        if (Input.GetKeyDown(leftRot)) {
+            toAngleX -= 90f;
+        }
+        if (Input.GetKeyDown(rightRot)) {
+            toAngleX += 90f;
+        }
+        if (Input.GetKeyDown(upRot)) {
+            toAngleY += 20f;
+        } else if (Input.GetKeyDown(downRot)) {
+            toAngleY -= 35f;
+        } else if (Input.GetKeyUp(upRot) || Input.GetKeyUp(downRot)) {
+            toAngleY = 0f;
+        }
+        cam.turn.x = Mathf.LerpAngle(cam.turn.x, toAngleX, Time.deltaTime * camRotateSpeed);
+        cam.turn.y = Mathf.Lerp(cam.turn.y, toAngleY, Time.deltaTime * camRotateSpeed);
+        if (isMoving) return;
+        if (Input.GetKey(upKey)) {
+            StartCoroutine(Roll(transform.position + primaryAxis * 0.5f - surfaceNormal * 0.5f, secondaryAxis, primaryAxis));
+        } else if (Input.GetKey(downKey)) {
+            StartCoroutine(Roll(transform.position - primaryAxis * 0.5f - surfaceNormal * 0.5f, -secondaryAxis, -primaryAxis));
+        } else if (Input.GetKey(rightKey)) {
+            StartCoroutine(Roll(transform.position + secondaryAxis * 0.5f - surfaceNormal * 0.5f, -primaryAxis, secondaryAxis));
+        } else if (Input.GetKey(leftKey)) {
+            StartCoroutine(Roll(transform.position - secondaryAxis * 0.5f - surfaceNormal * 0.5f, primaryAxis, -secondaryAxis));
+        }
+    }
 
-    //         if (Input.GetKeyUp(KeyCode.UpArrow) && lockKey == KeyCode.UpArrow) {
-    //             lockKey = KeyCode.None;
-    //             lockPrimAxis = Vector3.zero;
-    //         } else if (Input.GetKeyUp(KeyCode.DownArrow) && lockKey == KeyCode.DownArrow) {
-    //             lockKey = KeyCode.None;
-    //             lockPrimAxis = Vector3.zero;
-    //         } else if (Input.GetKeyUp(KeyCode.RightArrow) && lockKey == KeyCode.RightArrow) {
-    //             lockKey = KeyCode.None;
-    //             lockPrimAxis = Vector3.zero;
-    //         } else if (Input.GetKeyUp(KeyCode.LeftArrow) && lockKey == KeyCode.LeftArrow) {
-    //             lockKey = KeyCode.None;
-    //             lockPrimAxis = Vector3.zero;
-    //         }
-
-    //         if (Input.GetKeyDown(KeyCode.UpArrow)) {
-    //             lockKey = KeyCode.UpArrow;
-    //         } else if (Input.GetKeyDown(KeyCode.DownArrow)) {
-    //             lockKey = KeyCode.DownArrow;
-    //         } else if (Input.GetKeyDown(KeyCode.RightArrow)) {
-    //             lockKey = KeyCode.RightArrow;
-    //         } else if (Input.GetKeyDown(KeyCode.LeftArrow)) {
-    //             lockKey = KeyCode.LeftArrow;
-    //         }
-    //         if (isMoving) return;
-
-    //         if (lockPrimAxis == Vector3.zero) {
-    //             lockPrimAxis = primaryAxis; lockSecAxis = secondaryAxis;
-    //         }
-
-    //         if (lockKey == KeyCode.UpArrow) {
-    //             StartCoroutine(Roll(transform.position + lockPrimAxis * 0.5f - surfaceNormal * 0.5f, lockSecAxis, lockPrimAxis));
-    //         } else if (lockKey == KeyCode.DownArrow) {
-    //             StartCoroutine(Roll(transform.position - lockPrimAxis * 0.5f - surfaceNormal * 0.5f, -lockSecAxis, -lockPrimAxis));
-    //         } else if (lockKey == KeyCode.RightArrow) {
-    //             StartCoroutine(Roll(transform.position + lockSecAxis * 0.5f - surfaceNormal * 0.5f, -lockPrimAxis, lockSecAxis));
-    //         } else if (lockKey == KeyCode.LeftArrow) {
-    //             StartCoroutine(Roll(transform.position - lockSecAxis * 0.5f - surfaceNormal * 0.5f, lockPrimAxis, -lockSecAxis));
-    //         }
-
+    // void keysPriorityControls2() {
+    //     if (Input.GetKeyUp(upKey) && lockKey == upKey || Input.GetKeyUp(downKey) && lockKey == downKey || Input.GetKeyUp(rightKey) && lockKey == rightKey || Input.GetKeyUp(leftKey) && lockKey == leftKey) {
+    //         lockKey = KeyCode.None;
+    //         lockPrimAxis = Vector3.zero;
     //     }
+
+    //     if (Input.GetKeyDown(upKey)) {
+    //         lockKey = upKey;
+    //         lockPrimAxis = primaryAxis; lockSecAxis = secondaryAxis;
+
+    //     } else if (Input.GetKeyDown(downKey)) {
+    //         lockKey = downKey;
+    //         lockPrimAxis = primaryAxis; lockSecAxis = secondaryAxis;
+
+    //     } else if (Input.GetKeyDown(rightKey)) {
+    //         lockKey = rightKey;
+    //         lockPrimAxis = primaryAxis; lockSecAxis = secondaryAxis;
+
+    //     } else if (Input.GetKeyDown(leftKey)) {
+    //         lockKey = leftKey;
+    //         lockPrimAxis = primaryAxis; lockSecAxis = secondaryAxis;
+    //     }
+    //     if (isMoving) return;
+
+    //     if (surfaceNormal != lockNormal) {
+    //         lockPrimAxis = primaryAxis; lockSecAxis = secondaryAxis;
+    //     }
+
+    //     if (lockKey == upKey) {
+    //         StartCoroutine(Roll(transform.position + lockPrimAxis * 0.5f - surfaceNormal * 0.5f, lockSecAxis, lockPrimAxis));
+    //     } else if (lockKey == downKey) {
+    //         StartCoroutine(Roll(transform.position - lockPrimAxis * 0.5f - surfaceNormal * 0.5f, -lockSecAxis, -lockPrimAxis));
+    //     } else if (lockKey == rightKey) {
+    //         StartCoroutine(Roll(transform.position + lockSecAxis * 0.5f - surfaceNormal * 0.5f, -lockPrimAxis, lockSecAxis));
+    //     } else if (lockKey == leftKey) {
+    //         StartCoroutine(Roll(transform.position - lockSecAxis * 0.5f - surfaceNormal * 0.5f, lockPrimAxis, -lockSecAxis));
+    //     }
+    //     lockNormal = surfaceNormal;
+    // }
+
+    void mousePriorityControls() {
+        if (isMoving) return;
+        if (Input.GetKey(upKey)) {
+            StartCoroutine(Roll(transform.position + primaryAxis * 0.5f - surfaceNormal * 0.5f, secondaryAxis, primaryAxis));
+        } else if (Input.GetKey(downKey)) {
+            StartCoroutine(Roll(transform.position - primaryAxis * 0.5f - surfaceNormal * 0.5f, -secondaryAxis, -primaryAxis));
+        } else if (Input.GetKey(rightKey)) {
+            StartCoroutine(Roll(transform.position + secondaryAxis * 0.5f - surfaceNormal * 0.5f, -primaryAxis, secondaryAxis));
+        } else if (Input.GetKey(leftKey)) {
+            StartCoroutine(Roll(transform.position - secondaryAxis * 0.5f - surfaceNormal * 0.5f, primaryAxis, -secondaryAxis));
+        }
+    }
+}
+
+
+// [ReadOnly] inspector attribute
+
+public class ReadOnlyAttribute : PropertyAttribute {
+}
+[CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
+public class ReadOnlyDrawer : PropertyDrawer {
+    public override float GetPropertyHeight(SerializedProperty property,
+                                            GUIContent label) {
+        return EditorGUI.GetPropertyHeight(property, label, true);
+    }
+    public override void OnGUI(Rect position,
+                               SerializedProperty property,
+                               GUIContent label) {
+        GUI.enabled = false;
+        EditorGUI.PropertyField(position, property, label, true);
+        GUI.enabled = true;
+    }
 }
