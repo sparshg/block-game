@@ -76,7 +76,7 @@ public class Explode : MonoBehaviour {
         }
     }
     IEnumerator Explosion(Transform[] children, Vector3 normal, Vector3 primaryAxis, Vector3 secondaryAxis) {
-        int max = 0;
+        int max = int.MinValue;
         Vector3 maxChild = Vector3.zero, minChild;
 
         // Find top grid block
@@ -87,7 +87,6 @@ public class Explode : MonoBehaviour {
             }
         }
         minChild = maxChild - normal * (Pref.I.size - 1);
-
         // Cache Rigidbody
         Rigidbody[] rbs = new Rigidbody[children.Length];
         GameObject[] pc = new GameObject[children.Length];
@@ -140,6 +139,7 @@ public class Explode : MonoBehaviour {
             way[i][way[i].Length - 1] = children[i].localPosition;
             children[i].gameObject.GetComponent<BoxCollider>().enabled = false;
             rbs[i].isKinematic = true;
+            rbs[i].drag = 0;
             pc[i] = new GameObject();
             pc[i].SetActive(false);
             var path = pc[i].AddComponent<PathCreator>().bezierPath = new BezierPath(way[i], false, PathSpace.xyz);
