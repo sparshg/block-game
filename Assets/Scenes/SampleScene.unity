@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.003701415, g: 0.017648676, b: 0.011971094, a: 1}
+  m_IndirectSpecularColor: {r: 0.0021212606, g: 0.014197767, b: 0.012777643, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -861,7 +861,6 @@ GameObject:
   - component: {fileID: 2019936864}
   - component: {fileID: 2019936865}
   - component: {fileID: 2019936866}
-  - component: {fileID: 2019936867}
   m_Layer: 0
   m_Name: Environment
   m_TagString: Untagged
@@ -957,43 +956,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9467de5c697dd4d0994a501aa48e7c26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 0.3
---- !u!114 &2019936867
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2019936861}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fbe50ed1427d428408cdd140b0faca94, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SkyboxMat: {fileID: 2100000, guid: 7bcb3b869634a8e4f8198a1c98835c15, type: 2}
-  speed: 0
-  StartingColor: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 0.5176471}
-  EndColor: {r: 0.14887857, g: 0.1561201, b: 0.7735849, a: 0}
-  Curve:
+  rotSpeed: 0.3
+  colorSpeed: 0.2
+  initColor: {r: 0.375, g: 0.4384783, b: 0.5, a: 0.5019608}
+  endColor: {r: 0.24992505, g: 0, b: 0.6792453, a: 0.5019608}
+  curve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0.041663617
-      value: 0.13429907
-      inSlope: 0.38635087
-      outSlope: 0.38635087
-      tangentMode: 34
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.33333334
+      outWeight: 0
     - serializedVersion: 3
-      time: 0.9833374
-      value: 0.49811554
-      inSlope: 0.38635087
-      outSlope: 0.38635087
-      tangentMode: 34
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
+      inWeight: 0
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2

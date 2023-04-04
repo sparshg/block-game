@@ -116,9 +116,9 @@ public class Explode : MonoBehaviour {
                 }
             }
             way[i][0] = children[i].localPosition;
-            detachedCubes[map[normal]].Add(children);
-            detachedCubesSplines[map[normal]].Add(way);
         }
+        detachedCubes[map[normal]].Add(children);
+        detachedCubesSplines[map[normal]].Add(way);
 
         bool loop = true;
         while (loop) {
