@@ -13,14 +13,15 @@ public class Explode : MonoBehaviour {
     [SerializeField] private AnimationCurve rebuildCurve;
     [SerializeField] private float explosionSpeed1, explosionSpeed2, explosionRotation, explosionDrag, rebuildSpeed;
 
-    List<Transform>[] detachedCubes = new List<Transform>[6];
+    List<Transform[]>[] detachedCubes = new List<Transform[]>[3];
+    List<Vector3[][]>[] detachedCubesSplines = new List<Vector3[][]>[3];
     Dictionary<Vector3, int> map = new Dictionary<Vector3, int>() {
         {Vector3.right, 0},
-        {Vector3.left, 1},
+        {Vector3.left, 0},
+        {Vector3.back, 1},
+        {Vector3.forward, 1},
         {Vector3.up, 2},
-        {Vector3.down, 3},
-        {Vector3.forward, 4},
-        {Vector3.back, 5}
+        {Vector3.down, 2},
     };
     private MovePlayer player;
 
@@ -32,23 +33,26 @@ public class Explode : MonoBehaviour {
             StartCoroutine(Shake(true));
         }
         if (GUI.Button(new Rect(100, 20, 100, 20), "Rebuild")) {
-            // StartCoroutine(Rebuild());
+            StartCoroutine(Rebuild());
         }
     }
     void Awake() {
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<MovePlayer>();
     }
     void Start() {
-        for (int i = 0; i < 6; i++) {
-            detachedCubes[i] = new List<Transform>();
+        for (int i = 0; i < 3; i++) {
+            detachedCubes[i] = new List<Transform[]>();
+            detachedCubesSplines[i] = new List<Vector3[][]>();
         }
     }
+
+    // only call when normal is one of the 6 directions
     IEnumerator Shake(bool explode) {
         Vector2 toShake = new Vector2(Random.Range(1, Pref.I.size - 1), Random.Range(1, Pref.I.size - 1));
         Vector3 normal = player.surfaceNormal;
         Vector3 primaryAxis = player.primaryAxis;
         Vector3 secondaryAxis = player.secondaryAxis;
-        var children = grid.GetComponentsInChildren<Transform>().Where(t => {
+        Transform[] children = grid.GetComponentsInChildren<Transform>().Where(t => {
             if (normal.x == 1 || normal.x == -1) {
                 return t.localPosition.y == toShake.x && t.localPosition.z == toShake.y && t != transform;
             } else if (normal.y == 1 || normal.y == -1) {
@@ -89,7 +93,6 @@ public class Explode : MonoBehaviour {
         minChild = maxChild - normal * (Pref.I.size - 1);
         // Cache Rigidbody
         Rigidbody[] rbs = new Rigidbody[children.Length];
-        GameObject[] pc = new GameObject[children.Length];
         Vector3[][] way = new Vector3[children.Length][];
         for (int i = 0; i < children.Length; i++) {
             rbs[i] = children[i].gameObject.GetComponent<Rigidbody>();
@@ -97,7 +100,6 @@ public class Explode : MonoBehaviour {
             // if closer to minChild
             if (Vector3.Dot(-normal, minChild - children[i].localPosition) < Vector3.Dot(normal, maxChild - children[i].localPosition)) {
                 rbs[i].AddForce(-normal * explosionSpeed1, ForceMode.Impulse);
-                detachedCubes[map[-normal]].AddRange(children);
                 if (children[i].localPosition != minChild) {
                     way[i] = new Vector3[3];
                     way[i][1] = minChild;
@@ -106,7 +108,6 @@ public class Explode : MonoBehaviour {
                 }
             } else {
                 rbs[i].AddForce(normal * explosionSpeed1, ForceMode.Impulse);
-                detachedCubes[map[normal]].AddRange(children);
                 if (children[i].localPosition != maxChild) {
                     way[i] = new Vector3[3];
                     way[i][1] = maxChild;
@@ -115,7 +116,8 @@ public class Explode : MonoBehaviour {
                 }
             }
             way[i][0] = children[i].localPosition;
-           
+            detachedCubes[map[normal]].Add(children);
+            detachedCubesSplines[map[normal]].Add(way);
         }
 
         bool loop = true;
@@ -135,8 +137,21 @@ public class Explode : MonoBehaviour {
             }
             yield return null;
         }
-        yield return new WaitForSeconds(2f);
+    }
+
+    IEnumerator Rebuild() {
+        Vector3 normal = player.surfaceNormal;
+        int rand = Random.Range(0, detachedCubes[map[normal]].Count);
+        Transform[] children = detachedCubes[map[normal]][rand];
+        Vector3[][] way = detachedCubesSplines[map[normal]][rand];
+        detachedCubes[map[normal]].RemoveAt(rand);
+        detachedCubesSplines[map[normal]].RemoveAt(rand);
+
+        GameObject[] pc = new GameObject[children.Length];
+        Rigidbody[] rbs = new Rigidbody[children.Length];
+
         for (int i = 0; i < children.Length; i++) {
+            rbs[i] = children[i].gameObject.GetComponent<Rigidbody>();
             way[i][way[i].Length - 1] = children[i].localPosition;
             children[i].gameObject.GetComponent<BoxCollider>().enabled = false;
             rbs[i].isKinematic = true;
@@ -178,14 +193,5 @@ public class Explode : MonoBehaviour {
             );
         }
         foreach (var p in pc) Destroy(p);
-    }
-
-    IEnumerator Rebuild() {
-        var children = grid.GetComponentsInChildren<Transform>().Where(t => t != transform).ToArray();
-        foreach (var child in children) {
-            Destroy(child.gameObject);
-        }
-        // grid.Generate();
-        yield return null;
     }
 }
