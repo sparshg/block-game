@@ -115,6 +115,7 @@ public class Explode : MonoBehaviour {
                 }
             }
             way[i][0] = children[i].localPosition;
+           
         }
 
         bool loop = true;
