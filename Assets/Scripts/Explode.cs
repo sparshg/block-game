@@ -154,7 +154,7 @@ public class Explode : MonoBehaviour {
                     loop = true;
                 } else if (rbs[i].drag == 0) {
                     rbs[i].drag = explosionDrag;
-                    rbs[i].AddForce(Vector3.Cross(Random.insideUnitSphere, normal).normalized
+                    rbs[i].AddForce(Vector3.Cross(Random.insideUnitSphere, normal)
  * explosionSpeed2, ForceMode.Impulse);
                     rbs[i].AddTorque(Random.insideUnitSphere * explosionRotation, ForceMode.Impulse);
                     rbs[i].maxAngularVelocity = explosionRotation;
@@ -167,6 +167,7 @@ public class Explode : MonoBehaviour {
     }
 
     public IEnumerator Rebuild(Vector3 normal) {
+        if (detachedCubes[map[normal]].Count == 0) yield break;
         int rand = Random.Range(0, detachedCubes[map[normal]].Count);
         Transform[] children = detachedCubes[map[normal]][rand];
         Vector3[][] way = detachedCubesSplines[map[normal]][rand];
@@ -214,13 +215,14 @@ public class Explode : MonoBehaviour {
                 finished = true;
             }
         }
-        foreach (var child in children) {
-            child.localPosition = new Vector3(
-                Mathf.RoundToInt(child.localPosition.x),
-                Mathf.RoundToInt(child.localPosition.y),
-                Mathf.RoundToInt(child.localPosition.z)
+        for (int i = 0; i < children.Length; i++) {
+            children[i].localPosition = new Vector3(
+                Mathf.RoundToInt(children[i].localPosition.x),
+                Mathf.RoundToInt(children[i].localPosition.y),
+                Mathf.RoundToInt(children[i].localPosition.z)
             );
+            mats[i].SetFloat("_Intensity", 0f);
+            Destroy(pc[i].gameObject);
         }
-        foreach (var p in pc) Destroy(p.gameObject);
     }
 }

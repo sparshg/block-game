@@ -981,7 +981,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23e6de57c16ed44368e74cdcf4f8db6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 8
+  size: 10
 --- !u!114 &2019936865
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1046,10 +1046,10 @@ MonoBehaviour:
     m_RotationOrder: 4
   colorSpeed: 0.5
   colorIntensity: 2
-  explosionSpeed1: 80
-  explosionSpeed2: 60
+  explosionSpeed1: 100
+  explosionSpeed2: 100
   explosionRotation: 1
-  explosionDrag: 3.5
+  explosionDrag: 2
   rebuildSpeed: 0.5
 --- !u!114 &2019936866
 MonoBehaviour:
