@@ -35,13 +35,13 @@ public class Explode : MonoBehaviour {
 
     void OnGUI() {
         if (GUI.Button(new Rect(0, 0, 100, 20), "Shake")) {
-            StartCoroutine(Shake(false));
+            StartCoroutine(Shake(false, player.surfaceNormal));
         }
         if (GUI.Button(new Rect(100, 0, 100, 20), "Explode")) {
-            StartCoroutine(Shake(true));
+            StartCoroutine(Shake(true, player.surfaceNormal));
         }
         if (GUI.Button(new Rect(100, 20, 100, 20), "Rebuild")) {
-            StartCoroutine(Rebuild());
+            StartCoroutine(Rebuild(player.surfaceNormal));
         }
     }
     void Awake() {
@@ -55,11 +55,8 @@ public class Explode : MonoBehaviour {
     }
 
     // only call when normal is one of the 6 directions
-    IEnumerator Shake(bool explode) {
+    public IEnumerator Shake(bool explode, Vector3 normal) {
         Vector2 toShake = new Vector2(Random.Range(1, Pref.I.size - 1), Random.Range(1, Pref.I.size - 1));
-        Vector3 normal = player.surfaceNormal;
-        Vector3 primaryAxis = player.primaryAxis;
-        Vector3 secondaryAxis = player.secondaryAxis;
         Transform[] children = grid.GetComponentsInChildren<Transform>().Where(t => {
             if (normal.x == 1 || normal.x == -1) {
                 return t.localPosition.y == toShake.x && t.localPosition.z == toShake.y && t != transform;
@@ -97,11 +94,11 @@ public class Explode : MonoBehaviour {
         }
 
         if (explode) {
-            StartCoroutine(Explosion(children, normal, primaryAxis, secondaryAxis));
+            StartCoroutine(Explosion(children, normal));
             // voids[map[normal]].Add(toShake);
         }
     }
-    IEnumerator Explosion(Transform[] children, Vector3 normal, Vector3 primaryAxis, Vector3 secondaryAxis) {
+    IEnumerator Explosion(Transform[] children, Vector3 normal) {
         int max = int.MinValue;
         Vector3 maxChild = Vector3.zero, minChild;
 
@@ -157,7 +154,8 @@ public class Explode : MonoBehaviour {
                     loop = true;
                 } else if (rbs[i].drag == 0) {
                     rbs[i].drag = explosionDrag;
-                    rbs[i].AddForce((primaryAxis * Random.Range(-1f, 1f) + secondaryAxis * Random.Range(-1f, 1f)) * explosionSpeed2, ForceMode.Impulse);
+                    rbs[i].AddForce(Vector3.Cross(Random.insideUnitSphere, normal).normalized
+ * explosionSpeed2, ForceMode.Impulse);
                     rbs[i].AddTorque(Random.insideUnitSphere * explosionRotation, ForceMode.Impulse);
                     rbs[i].maxAngularVelocity = explosionRotation;
                     rbs[i].rotation = Random.rotation;
@@ -168,8 +166,7 @@ public class Explode : MonoBehaviour {
         }
     }
 
-    IEnumerator Rebuild() {
-        Vector3 normal = player.surfaceNormal;
+    public IEnumerator Rebuild(Vector3 normal) {
         int rand = Random.Range(0, detachedCubes[map[normal]].Count);
         Transform[] children = detachedCubes[map[normal]][rand];
         Vector3[][] way = detachedCubesSplines[map[normal]][rand];

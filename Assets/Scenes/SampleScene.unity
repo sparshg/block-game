@@ -892,7 +892,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1769783287}
   - component: {fileID: 1769783288}
-  - component: {fileID: 1769783289}
   m_Layer: 0
   m_Name: HoveringCam (1)
   m_TagString: Untagged
@@ -931,18 +930,6 @@ MonoBehaviour:
   player: {fileID: 2072824744}
   elevation: 2
   followSpeed: 10
---- !u!114 &1769783289
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1769783286}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fbe96fcecad304402af3694d6f55619d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2019936861
 GameObject:
   m_ObjectHideFlags: 0
@@ -955,6 +942,7 @@ GameObject:
   - component: {fileID: 2019936864}
   - component: {fileID: 2019936865}
   - component: {fileID: 2019936866}
+  - component: {fileID: 2019936867}
   m_Layer: 0
   m_Name: Environment
   m_TagString: Untagged
@@ -1103,6 +1091,22 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &2019936867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2019936861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69023d92d5e5947ea9c81895187f5957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  explodeTime: 7
+  rebuildMultiplier: 1.5
+  explodeInstances: 3
+  rebuildInstances: 1
 --- !u!1 &2072824742
 GameObject:
   m_ObjectHideFlags: 0
