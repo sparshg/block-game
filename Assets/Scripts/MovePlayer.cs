@@ -41,14 +41,13 @@ public class MovePlayer : MonoBehaviour {
 
     void OnGUI() {
         if (GUI.Button(new Rect(0, 20, 100, 20), "Burst")) {
-            StartCoroutine(Burst());
+            Burst();
         }
     }
 
-    IEnumerator Burst() {
-        yield return new WaitForSeconds(2f);
-        Instantiate(Resources.Load("Burst"), transform.position, Quaternion.FromToRotation(Vector3.up, surfaceNormal));
+    public void Burst() {
         gameObject.SetActive(false);
+        Instantiate(Resources.Load("Burst"), transform.position, Quaternion.FromToRotation(Vector3.up, surfaceNormal));
     }
 
     void OnDrawGizmosSelected() {
@@ -71,8 +70,17 @@ public class MovePlayer : MonoBehaviour {
             mousePriorityControls();
     }
 
+    public bool CheckBelow() {
+        bool didHit = Physics.Raycast(transform.position, -surfaceNormal, out RaycastHit hit, 2f);
+        if (!didHit || !hit.collider.gameObject.CompareTag("Grid")) {
+            return false;
+        }
+        return true;
+    }
+
     IEnumerator Roll(Vector3 anchor, Vector3 axis, Vector3 newNormal) {
         isMoving = true;
+        bool checkedBelow = false;
         float angle = 90f, _angle = 0f, _rotateSpeed = rotateSpeed, t1 = rotateCurve.Evaluate(0), t;
         Vector3 belowCube = transform.position - surfaceNormal;
         Vector3 toVec = belowCube + newNormal;
@@ -88,6 +96,12 @@ public class MovePlayer : MonoBehaviour {
             _angle += _rotateSpeed * Time.deltaTime;
             t = rotateCurve.Evaluate(_angle / angle);
             if (_angle >= angle) break;
+            if (!checkedBelow && t > 0.6f) {
+                checkedBelow = true;
+                if (!CheckBelow()) {
+                    Burst();
+                }
+            }
             transform.RotateAround(anchor, axis, (t - t1) * angle);
             t1 = t;
             if (angle == 180f) surfaceNormal = (transform.position - belowCube).normalized;

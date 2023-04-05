@@ -32,7 +32,9 @@ public class SpawnScript : MonoBehaviour {
                 spawnPos.x = -hoverHeight;
 
 
-            Collider[] colliders = Physics.OverlapSphere(spawnPos, 0.5f);
+            Collider[] colliders = Physics.OverlapSphere(spawnPos, 0.1f);
+            Debug.Log(colliders.Length);
+            Debug.Log(colliders[0].gameObject.transform.position);
 
             // check if the location already has a powerup
             if (colliders.Length == 0) {

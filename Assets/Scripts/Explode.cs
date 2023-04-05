@@ -121,6 +121,9 @@ public class Explode : MonoBehaviour {
         }
         detachedCubes[map[normal]].Add(children);
         detachedCubesSplines[map[normal]].Add(way);
+        if (Physics.Raycast(maxChild, normal, out RaycastHit hit, 2f) && hit.collider.gameObject.tag == "Player") {
+            player.Burst();
+        }
 
         bool loop = true;
         while (loop) {
@@ -134,7 +137,7 @@ public class Explode : MonoBehaviour {
                     rbs[i].AddTorque(Random.insideUnitSphere * explosionRotation, ForceMode.Impulse);
                     rbs[i].maxAngularVelocity = explosionRotation;
                     rbs[i].rotation = Random.rotation;
-                    rbs[i].gameObject.GetComponent<BoxCollider>().enabled = true;
+                    rbs[i].gameObject.GetComponent<BoxCollider>().isTrigger = false;
                 }
             }
             yield return null;
@@ -155,7 +158,7 @@ public class Explode : MonoBehaviour {
         for (int i = 0; i < children.Length; i++) {
             rbs[i] = children[i].gameObject.GetComponent<Rigidbody>();
             way[i][way[i].Length - 1] = children[i].localPosition;
-            children[i].gameObject.GetComponent<BoxCollider>().enabled = false;
+            children[i].gameObject.GetComponent<BoxCollider>().isTrigger = true;
             rbs[i].isKinematic = true;
             rbs[i].drag = 0;
             pc[i] = new GameObject();
