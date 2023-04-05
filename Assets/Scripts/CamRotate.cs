@@ -20,7 +20,7 @@ public class CamRotate : MonoBehaviour {
             turn.x += Input.GetAxis("Mouse X") * sensitivity;
             turn.x %= 360;
             turn.y += Input.GetAxis("Mouse Y") * sensitivity;
-            turn.y = Mathf.Clamp(turn.y, -60, 30);
+            turn.y = Mathf.Clamp(turn.y, -60, 80);
         }
 
         Quaternion rotation = Quaternion.FromToRotation(fromNormal, player.surfaceNormal) * history;

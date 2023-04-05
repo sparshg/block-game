@@ -32,13 +32,20 @@ public class SpawnScript : MonoBehaviour {
                 spawnPos.x = -hoverHeight;
 
 
-            Collider[] colliders = Physics.OverlapSphere(spawnPos, 0.1f);
-            Debug.Log(colliders.Length);
-            Debug.Log(colliders[0].gameObject.transform.position);
+            // if touching another powerup
+            Collider[] colliders = Physics.OverlapSphere(spawnPos, 0.5f);
+            bool isGoodLocation = false;
+            foreach (Collider c in colliders) {
+                if (c.CompareTag("Powerup")) {
+                    isGoodLocation = false;
+                    break;
+                } else if (c.CompareTag("Grid")) {
+                    isGoodLocation = true;
+                }
+            }
 
-            // check if the location already has a powerup
-            if (colliders.Length == 0) {
-                // spawn the powerup prefab at the location
+            // spawn the powerup prefab at the location
+            if (isGoodLocation) {
                 if (a == 0) {
                     Instantiate(powerUpPrefab, spawnPos, Quaternion.Euler(0, 0, 0), transform);
                 } else if (a == 1) {
@@ -46,17 +53,14 @@ public class SpawnScript : MonoBehaviour {
                 } else if (a == 2) {
                     Instantiate(powerUpPrefab, spawnPos, Quaternion.Euler(90, 0, 0), transform);
                 } else if (a == 3) {
-                    Instantiate(powerUpPrefab, spawnPos, Quaternion.Euler(270, 0, 0));
+                    Instantiate(powerUpPrefab, spawnPos, Quaternion.Euler(270, 0, 0), transform);
                 } else if (a == 4) {
                     Instantiate(powerUpPrefab, spawnPos, Quaternion.Euler(0, 0, 270), transform);
                 } else if (a == 5) {
                     Instantiate(powerUpPrefab, spawnPos, Quaternion.Euler(0, 0, 90), transform);
                 }
                 powerupCount++;
-            } else {
-                Debug.Log("Powerup already exists at " + spawnPos);
             }
-
             // wait for the spawn interval
             yield return new WaitForSeconds(spawnInterval);
         }
