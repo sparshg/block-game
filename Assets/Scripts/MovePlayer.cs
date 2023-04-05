@@ -65,9 +65,9 @@ public class MovePlayer : MonoBehaviour {
     }
 
     void Update() {
-        if (controls == Controls.KeyboardPriority) {
+        if (controls == Controls.KeyboardPriority)
             keysPriorityControls();
-        } else
+        else
             mousePriorityControls();
     }
 
