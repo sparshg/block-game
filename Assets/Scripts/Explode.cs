@@ -13,6 +13,7 @@ public class Explode : MonoBehaviour {
     [SerializeField] private AnimationCurve rebuildCurve;
     [SerializeField] private float explosionSpeed1, explosionSpeed2, explosionRotation, explosionDrag, rebuildSpeed;
 
+    List<Vector2>[] voids = new List<Vector2>[3];
     List<Transform[]>[] detachedCubes = new List<Transform[]>[3];
     List<Vector3[][]>[] detachedCubesSplines = new List<Vector3[][]>[3];
     Dictionary<Vector3, int> map = new Dictionary<Vector3, int>() {
@@ -77,6 +78,7 @@ public class Explode : MonoBehaviour {
         }
         if (explode) {
             StartCoroutine(Explosion(children, normal, primaryAxis, secondaryAxis));
+            voids[map[normal]].Add(toShake);
         }
     }
     IEnumerator Explosion(Transform[] children, Vector3 normal, Vector3 primaryAxis, Vector3 secondaryAxis) {
