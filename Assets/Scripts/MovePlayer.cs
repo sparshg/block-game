@@ -54,8 +54,7 @@ public class MovePlayer : MonoBehaviour {
     private float toAngleX, toAngleY;
     private Material mat;
     private float matT = 0;
-    private bool isMoving = false;
-    public bool shield = false;
+    public bool shield = false, isMoving = false;
 
     void OnGUI() {
         if (GUI.Button(new Rect(0, 20, 100, 20), "Burst")) {
@@ -67,7 +66,7 @@ public class MovePlayer : MonoBehaviour {
         if (checkShield && shield) return;
         CameraShaker.Instance.ShakeOnce(magnitude, roughness, fadeInTime, fadeOutTime);
         gameObject.SetActive(false);
-        Instantiate(Resources.Load("Burst"), transform.position, Quaternion.FromToRotation(Vector3.up, surfaceNormal));
+        (Instantiate(Resources.Load("Burst"), transform.position, Quaternion.FromToRotation(Vector3.up, surfaceNormal)) as GameObject).GetComponent<ParticleSystemRenderer>().material = mat;
     }
 
     void OnDrawGizmosSelected() {
@@ -93,7 +92,7 @@ public class MovePlayer : MonoBehaviour {
     }
 
     void CheckOnEdge() {
-        if (transform.position.x == Pref.I.size - 1 || transform.position.y == Pref.I.size - 1 || transform.position.z == Pref.I.size - 1 || transform.position.x == 0 || transform.position.y == 0 || transform.position.z == 0) {
+        if (!shield && (transform.position.x == Pref.I.size - 1 || transform.position.y == Pref.I.size - 1 || transform.position.z == Pref.I.size - 1 || transform.position.x == 0 || transform.position.y == 0 || transform.position.z == 0)) {
             if (matT < 1) {
                 matT += Time.deltaTime * edgeSpeed;
                 mat.SetFloat("_Intensity", edgeCurve.Evaluate(matT) * edgeIntensity);
@@ -136,7 +135,7 @@ public class MovePlayer : MonoBehaviour {
             _angle += _rotateSpeed * Time.deltaTime;
             t = rotateCurve.Evaluate(_angle / angle);
             if (_angle >= angle) break;
-            if (!checkedBelow && t > 0.6f) {
+            if (!checkedBelow && t > 0.7f) {
                 checkedBelow = true;
                 if (!CheckBelow()) {
                     Burst();

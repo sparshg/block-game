@@ -12,15 +12,29 @@ public class PowerupPlayer : MonoBehaviour {
     [SerializeField] private float fadeInTime;
     [SerializeField] private float fadeOutTime;
     private InventorySystem inventorySystem;
+    private MovePlayer player;
 
     void OnGUI() {
         if (GUI.Button(new Rect(0, 40, 100, 20), "Powerup Effect")) {
             StartCoroutine(PowerupEffects());
         }
+        if (GUI.Button(new Rect(100, 40, 100, 20), "Shield")) {
+            StartCoroutine(SpawnShield());
+        }
     }
 
     void Awake() {
         inventorySystem = GetComponent<InventorySystem>();
+        player = GetComponent<MovePlayer>();
+    }
+
+    IEnumerator SpawnShield() {
+        var shield = (Instantiate(Resources.Load("Shield")) as GameObject).GetComponent<Shield>();
+        shield.player = player;
+        player.shield = true;
+        StartCoroutine(shield.DisolveShield(true));
+        yield return new WaitForSeconds(5f);
+        StartCoroutine(shield.DisolveShield(false));
     }
 
     IEnumerator PowerupEffects() {
