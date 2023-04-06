@@ -6,6 +6,13 @@ using UnityEngine;
 public class PowerupPlayer : MonoBehaviour {
 
     // public CameraShakeInstance cameraShakePresets;
+    [Header("Powerup Shake")]
+    [SerializeField] private float magnitude;
+    [SerializeField] private float roughness;
+    [SerializeField] private float fadeInTime;
+    [SerializeField] private float fadeOutTime;
+    public InventorySystem inventorySystem;
+
     void OnGUI() {
         if (GUI.Button(new Rect(0, 40, 100, 20), "Powerup Effect")) {
             StartCoroutine(PowerupEffects());
@@ -13,7 +20,7 @@ public class PowerupPlayer : MonoBehaviour {
     }
 
     IEnumerator PowerupEffects() {
-        CameraShaker.Instance.Shake(CameraShakePresets.RoughDriving);
+        CameraShaker.Instance.ShakeOnce(magnitude, roughness, fadeInTime, fadeOutTime);
         yield return new WaitForSeconds(2f);
         // CameraShaker.Instance.Shake(CameraShakePresets.Bump);
         // yield return new WaitForSeconds(2f);
@@ -29,7 +36,11 @@ public class PowerupPlayer : MonoBehaviour {
     }
     void OnTriggerEnter(Collider other) {
         if (other.gameObject.CompareTag("Powerup")) {
-            Destroy(other.gameObject);
+            inventorySystem = GameObject.FindGameObjectWithTag("Inventory").GetComponent<InventorySystem>();
+            if (inventorySystem.inventory.Count < inventorySystem.maxInventorySize) {
+                inventorySystem.AddItem(other.gameObject);
+                Destroy(other.gameObject);
+            }
         }
     }
 }

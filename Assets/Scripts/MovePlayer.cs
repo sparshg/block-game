@@ -99,15 +99,15 @@ public class MovePlayer : MonoBehaviour {
                 mat.SetFloat("_Intensity", edgeCurve.Evaluate(matT) * edgeIntensity);
                 mat.SetFloat("_w", 1 - edgeCurve.Evaluate(matT) * edgeWidth);
             } else {
+                matT = 0;
                 Burst(false);
             }
-        } else {
-            if (matT > 0) {
-                matT -= Time.deltaTime * edgeSpeed;
-                mat.SetFloat("_Intensity", edgeCurve.Evaluate(matT) * edgeIntensity);
-                mat.SetFloat("_w", 1 - edgeCurve.Evaluate(matT) * edgeWidth);
-            }
+        } else if (matT > 0) {
+            matT -= Time.deltaTime * edgeSpeed;
+            mat.SetFloat("_Intensity", edgeCurve.Evaluate(matT) * edgeIntensity);
+            mat.SetFloat("_w", 1 - edgeCurve.Evaluate(matT) * edgeWidth);
         }
+
     }
 
     public bool CheckBelow() {
