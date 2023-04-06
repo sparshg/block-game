@@ -38,7 +38,7 @@ public class MovePlayer : MonoBehaviour {
 
     [Header("Movement")]
     [SerializeField] private AnimationCurve rotateCurve;
-    [SerializeField] private float rotateSpeed;
+    public float rotateSpeed;
 
     [Header("Camera")]
     [SerializeField] private float camRotateSpeed;

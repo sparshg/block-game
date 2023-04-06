@@ -140,4 +140,4 @@ MonoBehaviour:
     m_RotationOrder: 4
   speed: 1
   player: {fileID: 0}
-  down: 0.5
+  down: 0.4

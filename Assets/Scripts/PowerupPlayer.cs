@@ -11,8 +11,10 @@ public class PowerupPlayer : MonoBehaviour {
     [SerializeField] private float roughness;
     [SerializeField] private float fadeInTime;
     [SerializeField] private float fadeOutTime;
+    [SerializeField] private float speedMultiplier, fovMultiplier, fovSpeed;
     private InventorySystem inventorySystem;
     private MovePlayer player;
+    private Camera cam;
 
     void OnGUI() {
         if (GUI.Button(new Rect(0, 40, 100, 20), "Powerup Effect")) {
@@ -21,11 +23,31 @@ public class PowerupPlayer : MonoBehaviour {
         if (GUI.Button(new Rect(100, 40, 100, 20), "Shield")) {
             StartCoroutine(SpawnShield());
         }
+        if (GUI.Button(new Rect(200, 40, 100, 20), "Speed")) {
+            StartCoroutine(Speed());
+        }
     }
 
     void Awake() {
         inventorySystem = GetComponent<InventorySystem>();
         player = GetComponent<MovePlayer>();
+        cam = Camera.main;
+    }
+
+    IEnumerator Speed() {
+        player.rotateSpeed *= speedMultiplier;
+        float init = cam.fieldOfView, final = init * fovMultiplier;
+        while (cam.fieldOfView < final - 1f) {
+            cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, final, Time.deltaTime * fovSpeed);
+            yield return null;
+        }
+        yield return new WaitForSeconds(5f);
+        player.rotateSpeed /= speedMultiplier;
+        while (cam.fieldOfView > init + 1f) {
+            cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, init, Time.deltaTime * fovSpeed);
+            yield return null;
+        }
+        cam.fieldOfView = init;
     }
 
     IEnumerator SpawnShield() {

@@ -630,6 +630,9 @@ MonoBehaviour:
   roughness: 0
   fadeInTime: 0
   fadeOutTime: 0
+  speedMultiplier: 0
+  fovMultiplier: 0
+  fovSpeed: 0
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -1667,7 +1670,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60.000004
+  field of view: 70
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -2284,6 +2287,9 @@ MonoBehaviour:
   roughness: 3
   fadeInTime: 0.1
   fadeOutTime: 0.3
+  speedMultiplier: 1.4
+  fovMultiplier: 1.5
+  fovSpeed: 3
 --- !u!54 &2072824749
 Rigidbody:
   m_ObjectHideFlags: 0
