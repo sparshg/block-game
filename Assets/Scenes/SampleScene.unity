@@ -747,7 +747,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d66dbe4dc44f4c729b63aba5e130c8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  powerUpPrefab: {fileID: 1181235767313966435, guid: 8070e544cb546415e865e2e0ad0e307d,
+  powerUpPrefab: {fileID: 6882449930905910449, guid: 3d322c47f5b9c4dceb6fa9087cf03dda,
     type: 3}
   maxPowerups: 10
   spawnInterval: 5
