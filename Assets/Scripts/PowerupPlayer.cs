@@ -11,11 +11,28 @@ public class PowerupPlayer : MonoBehaviour {
     [SerializeField] private float roughness;
     [SerializeField] private float fadeInTime;
     [SerializeField] private float fadeOutTime;
-    [SerializeField] private float speedMultiplier, fovMultiplier, fovSpeed;
+
+    [Header("Powerup Speed")]
+    [SerializeField] private float speedMultiplier;
+    [SerializeField] private float fovSpeed;
+    [SerializeField] private float fovMultiplier;
+
+    [Header("Powerup Earthquake")]
+    [SerializeField] private int times;
+    [SerializeField] private float shakeWaitDuration;
+
     private InventorySystem inventorySystem;
     private MovePlayer player;
     private Camera cam;
-
+    private Explode explode;
+    private Vector3[] randomVectors = new Vector3[] {
+        Vector3.up,
+        Vector3.down,
+        Vector3.left,
+        Vector3.right,
+        Vector3.forward,
+        Vector3.back
+    };
     void OnGUI() {
         if (GUI.Button(new Rect(0, 40, 100, 20), "Powerup Effect")) {
             StartCoroutine(PowerupEffects());
@@ -26,12 +43,24 @@ public class PowerupPlayer : MonoBehaviour {
         if (GUI.Button(new Rect(200, 40, 100, 20), "Speed")) {
             StartCoroutine(Speed());
         }
+        if (GUI.Button(new Rect(300, 40, 100, 20), "Earthquake")) {
+            StartCoroutine(Earthquake());
+        }
     }
 
     void Awake() {
+        explode = GameObject.FindGameObjectWithTag("GameController").GetComponent<Explode>();
         inventorySystem = GetComponent<InventorySystem>();
         player = GetComponent<MovePlayer>();
         cam = Camera.main;
+    }
+
+    IEnumerator Earthquake() {
+        CameraShaker.Instance.Shake(CameraShakePresets.Earthquake);
+        for (int i = 0; i < times; i++) {
+            StartCoroutine(explode.Shake(true, randomVectors[Random.Range(0, randomVectors.Length)]));
+            yield return new WaitForSeconds(shakeWaitDuration);
+        }
     }
 
     IEnumerator Speed() {

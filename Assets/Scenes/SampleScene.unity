@@ -631,8 +631,14 @@ MonoBehaviour:
   fadeInTime: 0
   fadeOutTime: 0
   speedMultiplier: 0
-  fovMultiplier: 0
   fovSpeed: 0
+  fovMultiplier: 0
+  times: 0
+  shakeWaitDuration: 0
+  shakeMagnitude: 0
+  shakeRoughness: 0
+  shakeFadeInTime: 0
+  shakeFadeOutTime: 0
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -1901,7 +1907,7 @@ GameObject:
   - component: {fileID: 2019936867}
   m_Layer: 0
   m_Name: Environment
-  m_TagString: Untagged
+  m_TagString: GameController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2288,8 +2294,14 @@ MonoBehaviour:
   fadeInTime: 0.1
   fadeOutTime: 0.3
   speedMultiplier: 1.4
-  fovMultiplier: 1.5
   fovSpeed: 3
+  fovMultiplier: 1.5
+  times: 10
+  shakeWaitDuration: 0.1
+  shakeMagnitude: 0
+  shakeRoughness: 0
+  shakeFadeInTime: 0
+  shakeFadeOutTime: 0
 --- !u!54 &2072824749
 Rigidbody:
   m_ObjectHideFlags: 0

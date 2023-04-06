@@ -62,11 +62,12 @@ public class MovePlayer : MonoBehaviour {
         }
     }
 
-    public void Burst(bool checkShield = true) {
+    public void Burst(bool checkShield = true, Material material = null) {
         if (checkShield && shield) return;
         CameraShaker.Instance.ShakeOnce(magnitude, roughness, fadeInTime, fadeOutTime);
         gameObject.SetActive(false);
-        (Instantiate(Resources.Load("Burst"), transform.position, Quaternion.FromToRotation(Vector3.up, surfaceNormal)) as GameObject).GetComponent<ParticleSystemRenderer>().material = mat;
+        var burst = Instantiate(Resources.Load("Burst"), transform.position, Quaternion.FromToRotation(Vector3.up, surfaceNormal)) as GameObject;
+        burst.GetComponent<ParticleSystemRenderer>().material = material ?? mat;
     }
 
     void OnDrawGizmosSelected() {

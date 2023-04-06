@@ -102,8 +102,8 @@ public class Explode : MonoBehaviour {
         }
     }
     IEnumerator Explosion(Transform[] children, Vector3 normal) {
-        int max = int.MinValue;
-        Vector3 maxChild = Vector3.zero, minChild;
+        int max = int.MinValue, min = int.MaxValue;
+        Vector3 maxChild = Vector3.zero, minChild = Vector3.zero;
 
         // Find top grid block
         foreach (var child in children) {
@@ -111,8 +111,11 @@ public class Explode : MonoBehaviour {
                 max = (int)Vector3.Dot(normal, child.localPosition);
                 maxChild = child.localPosition;
             }
+            if (Vector3.Dot(normal, child.localPosition) < min) {
+                min = (int)Vector3.Dot(normal, child.localPosition);
+                minChild = child.localPosition;
+            }
         }
-        minChild = maxChild - normal * (Pref.I.size - 1);
         // Cache Rigidbody
         Rigidbody[] rbs = new Rigidbody[children.Length];
         Vector3[][] way = new Vector3[children.Length][];
@@ -144,14 +147,14 @@ public class Explode : MonoBehaviour {
         CameraShaker.Instance.ShakeOnce(magnitude, roughness, fadeInTime, fadeOutTime);
         if (Physics.Raycast(maxChild, normal, out RaycastHit hit, 2f)) {
             if (hit.collider.CompareTag("Player")) {
-                hit.collider.GetComponent<MovePlayer>().Burst();
+                hit.collider.GetComponent<MovePlayer>().Burst(material: children[max].GetComponent<Renderer>().material);
             } else if (hit.collider.tag == "Powerup") {
                 Destroy(hit.collider.gameObject);
             }
         }
         if (Physics.Raycast(minChild, -normal, out RaycastHit hit2, 2f)) {
             if (hit2.collider.CompareTag("Player")) {
-                hit2.collider.GetComponent<MovePlayer>().Burst();
+                hit2.collider.GetComponent<MovePlayer>().Burst(material: children[min].GetComponent<Renderer>().material);
             } else if (hit2.collider.tag == "Powerup") {
                 Destroy(hit2.collider.gameObject);
             }
@@ -162,6 +165,8 @@ public class Explode : MonoBehaviour {
             loop = false;
             for (int i = 0; i < children.Length; i++) {
                 if (Vector3.Dot(normal, maxChild - children[i].localPosition) >= 0 && Vector3.Dot(normal, minChild - children[i].localPosition) <= 0) {
+                    rbs[i].GetComponent<BoxCollider>().enabled = true;
+                    rbs[i].GetComponent<BoxCollider>().isTrigger = false;
                     loop = true;
                 } else if (rbs[i].drag == 0) {
                     rbs[i].drag = explosionDrag;
@@ -170,7 +175,7 @@ public class Explode : MonoBehaviour {
                     rbs[i].AddTorque(Random.insideUnitSphere * explosionRotation, ForceMode.Impulse);
                     rbs[i].maxAngularVelocity = explosionRotation;
                     rbs[i].rotation = Random.rotation;
-                    rbs[i].GetComponent<BoxCollider>().isTrigger = false;
+                    rbs[i].GetComponent<BoxCollider>().enabled = false;
                 }
             }
             yield return null;
