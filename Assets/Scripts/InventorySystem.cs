@@ -30,27 +30,15 @@ public class InventorySystem : MonoBehaviour {
                 sprites[2].sprite = item.GetComponent<PowerupScript>().sprite;
                 texts[2].text = item.GetComponent<PowerupScript>().type.ToString();
             }
-            // Notify other scripts that the inventory has been updated
-            SendMessage("OnInventoryUpdated", SendMessageOptions.DontRequireReceiver);
-        } else {
-            Debug.LogWarning("Inventory is full.");
         }
     }
 
     // Remove an item from the inventory
     public void RemoveItem(GameObject item) {
         inventory.Remove(item);
-        // Notify other scripts that the inventory has been updated
-        SendMessage("OnInventoryUpdated", SendMessageOptions.DontRequireReceiver);
     }
 
-    // Check if an item is in the inventory
     public bool HasItem(GameObject item) {
         return inventory.Contains(item);
-    }
-
-    // Get the list of items in the inventory
-    public List<GameObject> GetInventory() {
-        return inventory;
     }
 }

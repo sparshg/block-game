@@ -2,12 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using EZCameraShake;
 using UnityEngine;
-public enum PowerupType {
-    None,
-    SpeedBoost,
-    HealthBoost,
-    Shield
-}
+
 public class PowerupPlayer : MonoBehaviour {
 
     // public CameraShakeInstance cameraShakePresets;

@@ -1,7 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+public enum PowerupType {
+    None,
+    SpeedBoost,
+    HealthBoost,
+    Shield
+}
 public class Gameplay : MonoBehaviour {
     private Explode explode;
 

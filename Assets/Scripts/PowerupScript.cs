@@ -11,14 +11,6 @@ public class PowerupScript : MonoBehaviour {
     void Start() {
         type = (PowerupType)Random.Range(1, System.Enum.GetNames(typeof(PowerupType)).Length);
     }
-
-    private void OnTriggerEnter(Collider collision) {
-        if (collision.CompareTag("Player")) {
-            ApplyEffect();
-            Destroy(gameObject);
-        }
-    }
-
     private void ApplyEffect() {
         switch (type) {
             case PowerupType.SpeedBoost:
