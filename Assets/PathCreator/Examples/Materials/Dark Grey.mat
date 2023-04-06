@@ -67,6 +67,10 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+<<<<<<< Updated upstream:Assets/PathCreator/Examples/Materials/Dark Grey.mat
+=======
+    - _Rotation: 10.540305
+>>>>>>> Stashed changes:Assets/Materials/Space Sky.mat
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1

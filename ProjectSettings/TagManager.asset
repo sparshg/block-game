@@ -3,7 +3,20 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
+<<<<<<< Updated upstream
   tags: []
+=======
+  tags:
+  - Powerup
+  - Grid
+  - Inventory
+  - Image1
+  - Image2
+  - Image3
+  - Text1
+  - Text2
+  - Text3
+>>>>>>> Stashed changes
   layers:
   - Default
   - TransparentFX
