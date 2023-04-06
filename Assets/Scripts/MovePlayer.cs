@@ -27,6 +27,12 @@ public class MovePlayer : MonoBehaviour {
     [SerializeField] private KeyCode downRot;
     public Controls controls;
 
+    [Header("Edge")]
+    [SerializeField] private float edgeWidth;
+    [SerializeField] private float edgeIntensity;
+    [SerializeField] private float edgeSpeed;
+    [SerializeField] private AnimationCurve edgeCurve;
+
     [Header("Initialize")]
     [SerializeField] private Vector2 startingPos;
 
@@ -46,7 +52,8 @@ public class MovePlayer : MonoBehaviour {
     [SerializeField] private float fadeOutTime;
 
     private float toAngleX, toAngleY;
-
+    private Material mat;
+    private float matT = 0;
     private bool isMoving = false;
     public bool shield = false;
 
@@ -56,7 +63,7 @@ public class MovePlayer : MonoBehaviour {
         }
     }
 
-    public void Burst() {
+    public void Burst(bool checkShield = true) {
         if (shield) return;
         CameraShaker.Instance.ShakeOnce(magnitude, roughness, fadeInTime, fadeOutTime);
         gameObject.SetActive(false);
@@ -74,6 +81,7 @@ public class MovePlayer : MonoBehaviour {
 
     void Start() {
         transform.localPosition = new Vector3(startingPos.x, Pref.I.size, startingPos.y);
+        mat = GetComponent<Renderer>().material;
     }
 
     void Update() {
@@ -81,6 +89,25 @@ public class MovePlayer : MonoBehaviour {
             keysPriorityControls();
         else
             mousePriorityControls();
+        CheckOnEdge();
+    }
+
+    void CheckOnEdge() {
+        if (transform.position.x == Pref.I.size - 1 || transform.position.y == Pref.I.size - 1 || transform.position.z == Pref.I.size - 1 || transform.position.x == 0 || transform.position.y == 0 || transform.position.z == 0) {
+            if (matT < 1) {
+                matT += Time.deltaTime * edgeSpeed;
+                mat.SetFloat("_Intensity", edgeCurve.Evaluate(matT) * edgeIntensity);
+                mat.SetFloat("_w", 1 - edgeCurve.Evaluate(matT) * edgeWidth);
+            } else {
+                Burst(false);
+            }
+        } else {
+            if (matT > 0) {
+                matT -= Time.deltaTime * edgeSpeed;
+                mat.SetFloat("_Intensity", edgeCurve.Evaluate(matT) * edgeIntensity);
+                mat.SetFloat("_w", 1 - edgeCurve.Evaluate(matT) * edgeWidth);
+            }
+        }
     }
 
     public bool CheckBelow() {

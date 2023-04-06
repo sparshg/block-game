@@ -1121,7 +1121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9467de5c697dd4d0994a501aa48e7c26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotSpeed: 0.3
+  rotSpeed: 0.5
   colorSpeed: 0.2
   initColor: {r: 0.375, g: 0.4384783, b: 0.5, a: 0.5019608}
   endColor: {r: 0.24992505, g: 0, b: 0.6792453, a: 0.5019608}
@@ -1292,7 +1292,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: cd602fd14045a42c4a6e76df6e3b08c5, type: 2}
+  - {fileID: 2100000, guid: b9e99276466bc40098699e06a9f141e9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
