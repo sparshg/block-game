@@ -633,12 +633,10 @@ MonoBehaviour:
   speedMultiplier: 0
   fovSpeed: 0
   fovMultiplier: 0
-  times: 0
-  shakeWaitDuration: 0
-  shakeMagnitude: 0
-  shakeRoughness: 0
-  shakeFadeInTime: 0
-  shakeFadeOutTime: 0
+  quakeCount: 0
+  quakeWaitDuration: 0
+  rebuildCount: 0
+  rebuildWaitDuration: 0
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -2296,12 +2294,10 @@ MonoBehaviour:
   speedMultiplier: 1.4
   fovSpeed: 3
   fovMultiplier: 1.5
-  times: 10
-  shakeWaitDuration: 0.1
-  shakeMagnitude: 0
-  shakeRoughness: 0
-  shakeFadeInTime: 0
-  shakeFadeOutTime: 0
+  quakeCount: 10
+  quakeWaitDuration: 0.04
+  rebuildCount: 10
+  rebuildWaitDuration: 0.05
 --- !u!54 &2072824749
 Rigidbody:
   m_ObjectHideFlags: 0

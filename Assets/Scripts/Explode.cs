@@ -147,14 +147,14 @@ public class Explode : MonoBehaviour {
         CameraShaker.Instance.ShakeOnce(magnitude, roughness, fadeInTime, fadeOutTime);
         if (Physics.Raycast(maxChild, normal, out RaycastHit hit, 2f)) {
             if (hit.collider.CompareTag("Player")) {
-                hit.collider.GetComponent<MovePlayer>().Burst(material: children[max].GetComponent<Renderer>().material);
+                hit.collider.GetComponent<MovePlayer>().Burst(material: children[0].GetComponent<Renderer>().material);
             } else if (hit.collider.tag == "Powerup") {
                 Destroy(hit.collider.gameObject);
             }
         }
         if (Physics.Raycast(minChild, -normal, out RaycastHit hit2, 2f)) {
             if (hit2.collider.CompareTag("Player")) {
-                hit2.collider.GetComponent<MovePlayer>().Burst(material: children[min].GetComponent<Renderer>().material);
+                hit2.collider.GetComponent<MovePlayer>().Burst(material: children[0].GetComponent<Renderer>().material);
             } else if (hit2.collider.tag == "Powerup") {
                 Destroy(hit2.collider.gameObject);
             }

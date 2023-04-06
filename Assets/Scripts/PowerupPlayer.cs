@@ -18,8 +18,11 @@ public class PowerupPlayer : MonoBehaviour {
     [SerializeField] private float fovMultiplier;
 
     [Header("Powerup Earthquake")]
-    [SerializeField] private int times;
-    [SerializeField] private float shakeWaitDuration;
+    [SerializeField] private int quakeCount;
+    [SerializeField] private float quakeWaitDuration;
+    [Header("Powerup Rebuild")]
+    [SerializeField] private int rebuildCount;
+    [SerializeField] private float rebuildWaitDuration;
 
     private InventorySystem inventorySystem;
     private MovePlayer player;
@@ -43,8 +46,11 @@ public class PowerupPlayer : MonoBehaviour {
         if (GUI.Button(new Rect(200, 40, 100, 20), "Speed")) {
             StartCoroutine(Speed());
         }
-        if (GUI.Button(new Rect(300, 40, 100, 20), "Earthquake")) {
+        if (GUI.Button(new Rect(0, 60, 100, 20), "Earthquake")) {
             StartCoroutine(Earthquake());
+        }
+        if (GUI.Button(new Rect(100, 60, 100, 20), "RebuildPowerup")) {
+            StartCoroutine(Rebuild());
         }
     }
 
@@ -55,11 +61,24 @@ public class PowerupPlayer : MonoBehaviour {
         cam = Camera.main;
     }
 
+
+
+    IEnumerator Rebuild() {
+        CameraShakeInstance s = CameraShaker.Instance.StartShake(2f, 20f, 2f);
+        for (int i = 0; i < rebuildCount; i++) {
+            StartCoroutine(explode.Rebuild(randomVectors[Random.Range(0, randomVectors.Length)]));
+            yield return new WaitForSeconds(rebuildWaitDuration);
+        }
+        yield return new WaitForSeconds(2f);
+        s.StartFadeOut(2f);
+
+    }
+
     IEnumerator Earthquake() {
         CameraShaker.Instance.Shake(CameraShakePresets.Earthquake);
-        for (int i = 0; i < times; i++) {
+        for (int i = 0; i < quakeCount; i++) {
             StartCoroutine(explode.Shake(true, randomVectors[Random.Range(0, randomVectors.Length)]));
-            yield return new WaitForSeconds(shakeWaitDuration);
+            yield return new WaitForSeconds(quakeWaitDuration);
         }
     }
 
