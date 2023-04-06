@@ -64,7 +64,7 @@ public class MovePlayer : MonoBehaviour {
     }
 
     public void Burst(bool checkShield = true) {
-        if (shield) return;
+        if (checkShield && shield) return;
         CameraShaker.Instance.ShakeOnce(magnitude, roughness, fadeInTime, fadeOutTime);
         gameObject.SetActive(false);
         Instantiate(Resources.Load("Burst"), transform.position, Quaternion.FromToRotation(Vector3.up, surfaceNormal));

@@ -2,7 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using EZCameraShake;
 using UnityEngine;
-
+public enum PowerupType {
+    None,
+    SpeedBoost,
+    HealthBoost,
+    Shield
+}
 public class PowerupPlayer : MonoBehaviour {
 
     // public CameraShakeInstance cameraShakePresets;
@@ -11,12 +16,16 @@ public class PowerupPlayer : MonoBehaviour {
     [SerializeField] private float roughness;
     [SerializeField] private float fadeInTime;
     [SerializeField] private float fadeOutTime;
-    public InventorySystem inventorySystem;
+    private InventorySystem inventorySystem;
 
     void OnGUI() {
         if (GUI.Button(new Rect(0, 40, 100, 20), "Powerup Effect")) {
             StartCoroutine(PowerupEffects());
         }
+    }
+
+    void Awake() {
+        inventorySystem = GetComponent<InventorySystem>();
     }
 
     IEnumerator PowerupEffects() {
@@ -36,9 +45,8 @@ public class PowerupPlayer : MonoBehaviour {
     }
     void OnTriggerEnter(Collider other) {
         if (other.gameObject.CompareTag("Powerup")) {
-            inventorySystem = GameObject.FindGameObjectWithTag("Inventory").GetComponent<InventorySystem>();
             if (inventorySystem.inventory.Count < inventorySystem.maxInventorySize) {
-                inventorySystem.AddItem(other.gameObject);
+                // inventorySystem.AddItem(other.gameObject);
                 Destroy(other.gameObject);
             }
         }

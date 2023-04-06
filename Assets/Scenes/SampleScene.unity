@@ -417,7 +417,6 @@ MonoBehaviour:
   roughness: 0
   fadeInTime: 0
   fadeOutTime: 0
-  inventorySystem: {fileID: 0}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -668,60 +667,6 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
---- !u!1 &538922652
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 538922653}
-  - component: {fileID: 538922654}
-  m_Layer: 0
-  m_Name: InventorySystem
-  m_TagString: Inventory
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &538922653
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 538922652}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2019936863}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &538922654
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 538922652}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1f94a34527aa4c349ba6a32ff922d73, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxInventorySize: 3
-  inventory: []
-  sprites:
-  - {fileID: 922355906}
-  - {fileID: 1541408180}
-  - {fileID: 1845513375}
-  texts:
-  - {fileID: 1809989304}
-  - {fileID: 691575281}
-  - {fileID: 1650123264}
 --- !u!1 &691575279
 GameObject:
   m_ObjectHideFlags: 0
@@ -1216,7 +1161,7 @@ GameObject:
   - component: {fileID: 1325811261}
   - component: {fileID: 1325811262}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: ShakingCam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1541,7 +1486,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1715143605}
-  m_Enabled: 0
+  m_Enabled: 1
 --- !u!20 &1715143609
 Camera:
   m_ObjectHideFlags: 0
@@ -1895,7 +1840,6 @@ Transform:
   - {fileID: 264114008}
   - {fileID: 2072824743}
   - {fileID: 904148656}
-  - {fileID: 538922653}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2054,6 +1998,7 @@ GameObject:
   - component: {fileID: 2072824746}
   - component: {fileID: 2072824745}
   - component: {fileID: 2072824749}
+  - component: {fileID: 2072824750}
   - component: {fileID: 2072824744}
   - component: {fileID: 2072824748}
   m_Layer: 0
@@ -2102,12 +2047,48 @@ MonoBehaviour:
   upRot: 107
   downRot: 44
   controls: 0
-  edgeWidth: 0
-  edgeIntensity: 0
-  edgeSpeed: 0
+  edgeWidth: 0.5
+  edgeIntensity: 2
+  edgeSpeed: 0.4
   edgeCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.24079244
+      value: 0.43156874
+      inSlope: 1.5367508
+      outSlope: 1.5367508
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.46129507
+      value: 0.71408033
+      inSlope: 0.90598506
+      outSlope: 0.90598506
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0.14076565
+      outSlope: 0.14076565
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.2813416
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -2223,7 +2204,6 @@ MonoBehaviour:
   roughness: 0
   fadeInTime: 0
   fadeOutTime: 0
-  inventorySystem: {fileID: 0}
 --- !u!54 &2072824749
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2240,3 +2220,25 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &2072824750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2072824742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1f94a34527aa4c349ba6a32ff922d73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxInventorySize: 3
+  inventory: []
+  sprites:
+  - {fileID: 922355906}
+  - {fileID: 1541408180}
+  - {fileID: 1845513375}
+  texts:
+  - {fileID: 1809989304}
+  - {fileID: 691575281}
+  - {fileID: 1650123264}
