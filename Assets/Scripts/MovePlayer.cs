@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using EZCameraShake;
 
 public enum Controls {
     MousePriority,
@@ -32,12 +33,22 @@ public class MovePlayer : MonoBehaviour {
     [Header("Movement")]
     [SerializeField] private AnimationCurve rotateCurve;
     [SerializeField] private float rotateSpeed;
+
     [Header("Camera")]
     [SerializeField] private float camRotateSpeed;
     [SerializeField] private CamRotate cam;
+
+
+    [Header("Burst Shake")]
+    [SerializeField] private float magnitude;
+    [SerializeField] private float roughness;
+    [SerializeField] private float fadeInTime;
+    [SerializeField] private float fadeOutTime;
+
     private float toAngleX, toAngleY;
 
     private bool isMoving = false;
+    public bool shield = false;
 
     void OnGUI() {
         if (GUI.Button(new Rect(0, 20, 100, 20), "Burst")) {
@@ -46,6 +57,8 @@ public class MovePlayer : MonoBehaviour {
     }
 
     public void Burst() {
+        if (shield) return;
+        CameraShaker.Instance.ShakeOnce(magnitude, roughness, fadeInTime, fadeOutTime);
         gameObject.SetActive(false);
         Instantiate(Resources.Load("Burst"), transform.position, Quaternion.FromToRotation(Vector3.up, surfaceNormal));
     }

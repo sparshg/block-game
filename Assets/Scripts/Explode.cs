@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using EZCameraShake;
 using PathCreation;
 using UnityEngine;
 
@@ -8,6 +9,13 @@ public class Explode : MonoBehaviour {
 
     [SerializeField] private GenerateGrid grid;
     [SerializeField][Range(0.0f, 0.3f)] private float shakeAmount = 0.1f;
+
+    [Header("Explosion Shake")]
+    [SerializeField] private float magnitude;
+    [SerializeField] private float roughness;
+    [SerializeField] private float fadeInTime;
+    [SerializeField] private float fadeOutTime;
+
     [SerializeField] private AnimationCurve rebuildCurve, colorCurve;
     [Header("Explosion Color")]
     [SerializeField] private float colorSpeed;
@@ -34,9 +42,6 @@ public class Explode : MonoBehaviour {
     private MovePlayer player;
 
     void OnGUI() {
-        if (GUI.Button(new Rect(0, 0, 100, 20), "Shake")) {
-            StartCoroutine(Shake(false, player.surfaceNormal));
-        }
         if (GUI.Button(new Rect(100, 0, 100, 20), "Explode")) {
             StartCoroutine(Shake(true, player.surfaceNormal));
         }
@@ -68,10 +73,8 @@ public class Explode : MonoBehaviour {
         }).ToArray();
 
         Material[] mats = new Material[children.Length];
-        Color col = Random.ColorHSV(0, 1, 0.7f, 1, 0.7f, 1);
         for (int i = 0; i < children.Length; i++) {
             mats[i] = children[i].GetComponent<Renderer>().material;
-            mats[i].SetColor("_Color", col);
         }
         float t = 0;
         while (t < 1) {
@@ -138,11 +141,19 @@ public class Explode : MonoBehaviour {
         }
         detachedCubes[map[normal]].Add(children);
         detachedCubesSplines[map[normal]].Add(way);
+        CameraShaker.Instance.ShakeOnce(magnitude, roughness, fadeInTime, fadeOutTime);
         if (Physics.Raycast(maxChild, normal, out RaycastHit hit, 2f)) {
-            if (hit.collider.tag == "Player") {
-                player.Burst();
+            if (hit.collider.CompareTag("Player")) {
+                hit.collider.GetComponent<MovePlayer>().Burst();
             } else if (hit.collider.tag == "Powerup") {
                 Destroy(hit.collider.gameObject);
+            }
+        }
+        if (Physics.Raycast(minChild, -normal, out RaycastHit hit2, 2f)) {
+            if (hit2.collider.CompareTag("Player")) {
+                hit2.collider.GetComponent<MovePlayer>().Burst();
+            } else if (hit2.collider.tag == "Powerup") {
+                Destroy(hit2.collider.gameObject);
             }
         }
 

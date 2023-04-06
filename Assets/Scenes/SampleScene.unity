@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.03294181, g: 0.026146455, b: 0.01562729, a: 1}
+  m_IndirectSpecularColor: {r: 0.01501589, g: 0.010552164, b: 0.006412779, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -293,6 +293,11 @@ MonoBehaviour:
   rotateSpeed: 300
   camRotateSpeed: 10
   cam: {fileID: 330585548}
+  magnitude: 0
+  roughness: 0
+  fadeInTime: 0
+  fadeOutTime: 0
+  shield: 0
 --- !u!65 &264114005
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -747,6 +752,55 @@ MonoBehaviour:
   maxPowerups: 10
   spawnInterval: 5
   hoverHeight: 0.5
+--- !u!1 &1325811260
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1325811261}
+  - component: {fileID: 1325811262}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1325811261
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1325811260}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 6.2, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1769783287}
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1325811262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1325811260}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ab8353b5ebd32545867da143199a814, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DefaultPosInfluence: {x: 0.15, y: 0.15, z: 0.15}
+  DefaultRotInfluence: {x: 1, y: 1, z: 1}
+  RestPositionOffset: {x: 0, y: 0, z: 0}
+  RestRotationOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &1715143605
 GameObject:
   m_ObjectHideFlags: 0
@@ -806,7 +860,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -906,14 +960,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1769783286}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 6.2, z: -10}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1715143610}
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_Father: {fileID: 1325811261}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1769783288
 MonoBehaviour:
@@ -996,6 +1050,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 8801460}
   shakeAmount: 0.035
+  magnitude: 2.5
+  roughness: 3.5
+  fadeInTime: 0.1
+  fadeOutTime: 0.7
   rebuildCurve:
     serializedVersion: 2
     m_Curve:
@@ -1050,7 +1108,7 @@ MonoBehaviour:
   explosionSpeed2: 100
   explosionRotation: 1
   explosionDrag: 2
-  rebuildSpeed: 0.5
+  rebuildSpeed: 0.3
 --- !u!114 &2019936866
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1119,8 +1177,8 @@ GameObject:
   - component: {fileID: 2072824747}
   - component: {fileID: 2072824746}
   - component: {fileID: 2072824745}
-  - component: {fileID: 2072824744}
   - component: {fileID: 2072824749}
+  - component: {fileID: 2072824744}
   - component: {fileID: 2072824748}
   m_Layer: 0
   m_Name: Cube (1)
@@ -1196,6 +1254,11 @@ MonoBehaviour:
   rotateSpeed: 300
   camRotateSpeed: 10
   cam: {fileID: 1715143606}
+  magnitude: 5
+  roughness: 6
+  fadeInTime: 0
+  fadeOutTime: 1.5
+  shield: 0
 --- !u!65 &2072824745
 BoxCollider:
   m_ObjectHideFlags: 0
