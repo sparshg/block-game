@@ -1450,7 +1450,7 @@ GameObject:
   - component: {fileID: 1164256191}
   - component: {fileID: 1164256192}
   m_Layer: 0
-  m_Name: HoveringCam (1)
+  m_Name: HoveringCam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1827,7 +1827,7 @@ GameObject:
   - component: {fileID: 1769783287}
   - component: {fileID: 1769783288}
   m_Layer: 0
-  m_Name: HoveringCam (1)
+  m_Name: HoveringCam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

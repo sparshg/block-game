@@ -64,18 +64,21 @@ public class PowerupPlayer : MonoBehaviour {
 
 
     IEnumerator Rebuild() {
-        CameraShakeInstance s = CameraShaker.Instance.StartShake(2f, 20f, 2f);
+        List<CameraShakeInstance> s = new List<CameraShakeInstance>();
+        foreach (var i in CameraShaker.instanceList.Values) {
+            s.Add(i.StartShake(2f, 20f, 2f));
+        }
         for (int i = 0; i < rebuildCount; i++) {
             StartCoroutine(explode.Rebuild(randomVectors[Random.Range(0, randomVectors.Length)]));
             yield return new WaitForSeconds(rebuildWaitDuration);
         }
         yield return new WaitForSeconds(2f);
-        s.StartFadeOut(2f);
+        foreach (var i in s) i.StartFadeOut(2f);
 
     }
 
     IEnumerator Earthquake() {
-        CameraShaker.Instance.Shake(CameraShakePresets.Earthquake);
+        CameraShaker.ShakeAll(CameraShakePresets.Earthquake);
         for (int i = 0; i < quakeCount; i++) {
             StartCoroutine(explode.Shake(true, randomVectors[Random.Range(0, randomVectors.Length)]));
             yield return new WaitForSeconds(quakeWaitDuration);
@@ -108,19 +111,19 @@ public class PowerupPlayer : MonoBehaviour {
     }
 
     IEnumerator PowerupEffects() {
-        CameraShaker.Instance.ShakeOnce(magnitude, roughness, fadeInTime, fadeOutTime);
+        CameraShaker.ShakeAll(magnitude, roughness, fadeInTime, fadeOutTime);
         yield return new WaitForSeconds(2f);
-        // CameraShaker.Instance.Shake(CameraShakePresets.Bump);
+        // CameraShaker.ShakeAll.Shake(CameraShakePresets.Bump);
         // yield return new WaitForSeconds(2f);
-        // CameraShaker.Instance.Shake(CameraShakePresets.Earthquake);
+        // CameraShaker.ShakeAll.Shake(CameraShakePresets.Earthquake);
         // yield return new WaitForSeconds(2f);
-        // CameraShaker.Instance.Shake(CameraShakePresets.Explosion);
+        // CameraShaker.ShakeAll.Shake(CameraShakePresets.Explosion);
         // yield return new WaitForSeconds(2f);
-        // CameraShaker.Instance.Shake(CameraShakePresets.Vibration);
+        // CameraShaker.ShakeAll.Shake(CameraShakePresets.Vibration);
         // yield return new WaitForSeconds(2f);
-        // CameraShaker.Instance.Shake(CameraShakePresets.RoughDriving);
+        // CameraShaker.ShakeAll.Shake(CameraShakePresets.RoughDriving);
         // yield return new WaitForSeconds(2f);
-        // CameraShaker.Instance.Shake(CameraShakePresets.HandheldCamera);
+        // CameraShaker.ShakeAll.Shake(CameraShakePresets.HandheldCamera);
     }
     void OnTriggerEnter(Collider other) {
         if (other.gameObject.CompareTag("Powerup")) {

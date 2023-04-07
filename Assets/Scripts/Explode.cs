@@ -141,7 +141,7 @@ public class Explode : MonoBehaviour {
         }
         detachedCubes[map[normal]].Add(children);
         detachedCubesSplines[map[normal]].Add(way);
-        CameraShaker.Instance.ShakeOnce(magnitude, roughness, fadeInTime, fadeOutTime);
+        CameraShaker.ShakeAll(magnitude, roughness, fadeInTime, fadeOutTime);
 
 
         bool loop = true;

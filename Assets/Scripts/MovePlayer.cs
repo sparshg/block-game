@@ -66,7 +66,7 @@ public class MovePlayer : MonoBehaviour {
 
     public void Burst(bool checkShield = true, Material material = null) {
         if (checkShield && shield) return;
-        CameraShaker.Instance.ShakeOnce(magnitude, roughness, fadeInTime, fadeOutTime);
+        CameraShaker.ShakeAll(magnitude, roughness, fadeInTime, fadeOutTime);
         gameObject.SetActive(false);
         var burst = Instantiate(Resources.Load("Burst"), transform.position, Quaternion.FromToRotation(Vector3.up, surfaceNormal)) as GameObject;
         burst.GetComponent<ParticleSystemRenderer>().material = material ?? mat;
@@ -138,7 +138,6 @@ public class MovePlayer : MonoBehaviour {
         } else {
             toVec += surfaceNormal;
             if (player && player.transform.position == toVec) {
-                Debug.Log(axis);
                 StartCoroutine(player.Roll(anchor + newNormal, axis, newNormal));
             }
         }
