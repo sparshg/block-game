@@ -4,27 +4,37 @@ using UnityEngine;
 
 public class Skybox : MonoBehaviour {
     [SerializeField] private float rotSpeed, colorSpeed;
-    public Color initColor, endColor;
+
+    [SerializeField] private Color initColor, quakeColor, rebuildColor;
+    [SerializeField] private float rebuildSpeed, quakeSpeed;
     public AnimationCurve curve;
 
     void Start() {
         RenderSettings.skybox.SetColor("_Tint", initColor);
     }
-    void OnGUI() {
-        if (GUI.Button(new Rect(200, 0, 100, 20), "ColorChange")) {
-            StartCoroutine(ColorChange());
-        }
+    public void QuakeEffect() {
+        StopAllCoroutines();
+        StartCoroutine(ColorChange(quakeColor, quakeSpeed));
+    }
+    public void RebuildEffect() {
+        StopAllCoroutines();
+        StartCoroutine(ColorChange(rebuildColor, rebuildSpeed));
     }
 
-    IEnumerator ColorChange() {
+    public void ResetColor() {
+        StopAllCoroutines();
+        StartCoroutine(ColorChange(initColor, colorSpeed));
+    }
+
+    IEnumerator ColorChange(Color end, float speed) {
         float t = 0;
         Color startingColor = RenderSettings.skybox.GetColor("_Tint");
         while (t <= 1) {
-            RenderSettings.skybox.SetColor("_Tint", Color.Lerp(startingColor, endColor, curve.Evaluate(t)));
-            t += Time.deltaTime * colorSpeed;
+            RenderSettings.skybox.SetColor("_Tint", Color.Lerp(startingColor, end, curve.Evaluate(t)));
+            t += Time.deltaTime * speed;
             yield return null;
         }
-        RenderSettings.skybox.SetColor("_Tint", endColor);
+        RenderSettings.skybox.SetColor("_Tint", end);
     }
     void Update() {
         RenderSettings.skybox.SetFloat("_Rotation", Time.time * rotSpeed);

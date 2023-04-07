@@ -20,6 +20,9 @@ public class PowerupPlayer : MonoBehaviour {
     [Header("Powerup Earthquake")]
     [SerializeField] private int quakeCount;
     [SerializeField] private float quakeWaitDuration;
+    [SerializeField] private Color quakeSkyColor;
+    [SerializeField] private float quakeSkySpeed;
+
     [Header("Powerup Rebuild")]
     [SerializeField] private int rebuildCount;
     [SerializeField] private float rebuildWaitDuration;
@@ -29,6 +32,7 @@ public class PowerupPlayer : MonoBehaviour {
     private Camera cam;
     private CamFollow camFollow;
     private Explode explode;
+    private Skybox sky;
     private Vector3[] randomVectors = new Vector3[] {
         Vector3.up,
         Vector3.down,
@@ -57,24 +61,26 @@ public class PowerupPlayer : MonoBehaviour {
 
     void Awake() {
         explode = GameObject.FindGameObjectWithTag("GameController").GetComponent<Explode>();
+        sky = explode.GetComponent<Skybox>();
         inventorySystem = GetComponent<InventorySystem>();
         player = GetComponent<MovePlayer>();
         cam = player.cam.GetComponent<Camera>();
         camFollow = player.cam.transform.parent.GetComponent<CamFollow>();
     }
 
-
-
     IEnumerator Rebuild() {
         // CameraShaker.ShakeAll(CameraShakePresets);
+        sky.RebuildEffect();
         for (int i = 0; i < rebuildCount; i++) {
             StartCoroutine(explode.Rebuild(randomVectors[Random.Range(0, randomVectors.Length)]));
             yield return new WaitForSeconds(rebuildWaitDuration);
         }
-
+        yield return new WaitForSeconds(1f);
+        sky.ResetColor();
     }
 
     IEnumerator Earthquake() {
+        sky.QuakeEffect();
         List<CameraShakeInstance> s = new List<CameraShakeInstance>();
         foreach (var i in CameraShaker.instanceList.Values) {
             s.Add(i.StartShake(2f, 20f, 2f));
@@ -85,7 +91,7 @@ public class PowerupPlayer : MonoBehaviour {
         }
         yield return new WaitForSeconds(2f);
         foreach (var i in s) i.StartFadeOut(1.5f);
-
+        sky.ResetColor();
     }
 
     IEnumerator Speed() {
@@ -120,9 +126,8 @@ public class PowerupPlayer : MonoBehaviour {
         camFollow.followSpeed /= 2f;
         yield return new WaitForSeconds(1f);
         camFollow.followSpeed *= 2f;
-
-
     }
+
     void OnTriggerEnter(Collider other) {
         if (other.gameObject.CompareTag("Powerup")) {
             if (inventorySystem.inventory.Count < inventorySystem.maxInventorySize) {

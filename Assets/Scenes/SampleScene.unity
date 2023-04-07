@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.01501589, g: 0.010552164, b: 0.006412779, a: 1}
+  m_IndirectSpecularColor: {r: 0.041293625, g: 0.0313707, b: 0.019725349, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1183,6 +1183,8 @@ MonoBehaviour:
   fovMultiplier: 1.5
   quakeCount: 10
   quakeWaitDuration: 0.04
+  quakeSkyColor: {r: 0, g: 0, b: 0, a: 0}
+  quakeSkySpeed: 0
   rebuildCount: 10
   rebuildWaitDuration: 0.05
 --- !u!114 &1037191034
@@ -1289,6 +1291,8 @@ MonoBehaviour:
   player: {fileID: 0}
   shield: 0
   isMoving: 0
+  health: 0
+  damage: 0.2
 --- !u!114 &1037191035
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2139,8 +2143,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotSpeed: 0.5
   colorSpeed: 0.2
-  initColor: {r: 0.375, g: 0.4384783, b: 0.5, a: 0.5019608}
-  endColor: {r: 0.24992505, g: 0, b: 0.6792453, a: 0.5019608}
+  initColor: {r: 0.41745284, g: 0.47740027, b: 0.5566038, a: 0.5019608}
+  quakeColor: {r: 0.6039216, g: 0.4, b: 0.54509807, a: 0.5019608}
+  rebuildColor: {r: 0.43137255, g: 0.7058824, b: 0.6862745, a: 0.5019608}
+  rebuildSpeed: 1
+  quakeSpeed: 1
   curve:
     serializedVersion: 2
     m_Curve:
@@ -2323,6 +2330,8 @@ MonoBehaviour:
   player: {fileID: 0}
   shield: 0
   isMoving: 0
+  health: 0
+  damage: 0.2
 --- !u!65 &2072824745
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2407,6 +2416,8 @@ MonoBehaviour:
   fovMultiplier: 1.5
   quakeCount: 10
   quakeWaitDuration: 0.04
+  quakeSkyColor: {r: 0, g: 0, b: 0, a: 0}
+  quakeSkySpeed: 0
   rebuildCount: 10
   rebuildWaitDuration: 0.05
 --- !u!54 &2072824749

@@ -52,11 +52,12 @@ public class MovePlayer : MonoBehaviour {
     [SerializeField] private float fadeInTime;
     [SerializeField] private float fadeOutTime;
 
-    private float toAngleX, toAngleY = -20f;
+    private float toAngleX, toAngleY = -20;
     private Material mat;
-    public MovePlayer player;
     private float matT = 0;
+    public MovePlayer player;
     public bool shield, isMoving = false;
+    public float health, damage;
 
     void OnGUI() {
         if (GUI.Button(new Rect(0, 20, 100, 20), "Burst")) {
@@ -98,25 +99,30 @@ public class MovePlayer : MonoBehaviour {
             keysPriorityControls();
         else
             mousePriorityControls();
-        CheckOnEdge();
+        CheckHealth();
     }
 
-    void CheckOnEdge() {
+    void CheckHealth() {
         if (!shield && (transform.position.x == Pref.I.size - 1 || transform.position.y == Pref.I.size - 1 || transform.position.z == Pref.I.size - 1 || transform.position.x == 0 || transform.position.y == 0 || transform.position.z == 0)) {
             if (matT < 1) {
                 matT += Time.deltaTime * edgeSpeed;
                 mat.SetFloat("_Intensity", edgeCurve.Evaluate(matT) * edgeIntensity);
                 mat.SetFloat("_w", 1 - edgeCurve.Evaluate(matT) * edgeWidth);
-            } else {
-                matT = 0;
-                Burst(false);
             }
-        } else if (matT > 0) {
-            matT -= Time.deltaTime * edgeSpeed;
+        } else if (matT > health) {
+            matT = Mathf.Max(health, matT - Time.deltaTime * edgeSpeed);
+            mat.SetFloat("_Intensity", edgeCurve.Evaluate(matT) * edgeIntensity);
+            mat.SetFloat("_w", 1 - edgeCurve.Evaluate(matT) * edgeWidth);
+        } else if (matT < health) {
+            matT = Mathf.Min(health, matT + Time.deltaTime * edgeSpeed);
             mat.SetFloat("_Intensity", edgeCurve.Evaluate(matT) * edgeIntensity);
             mat.SetFloat("_w", 1 - edgeCurve.Evaluate(matT) * edgeWidth);
         }
-
+        if (matT >= 1) {
+            matT = 0;
+            health = 0;
+            Burst(false);
+        }
     }
 
     public bool CheckBelow() {
@@ -139,14 +145,15 @@ public class MovePlayer : MonoBehaviour {
             cam.SetIntermediateRotation(surfaceNormal);
             if (player && player.transform.position == toVec) {
                 StartCoroutine(player.Roll(anchor - surfaceNormal, axis, -surfaceNormal));
+                player.health += damage;
             }
         } else {
             toVec += surfaceNormal;
             if (player && player.transform.position == toVec) {
                 StartCoroutine(player.Roll(anchor + newNormal, axis, newNormal));
+                player.health += damage;
             }
         }
-
 
         while (true) {
             _angle += _rotateSpeed * Time.deltaTime;
