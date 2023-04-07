@@ -14,6 +14,8 @@ public class MovePlayer : MonoBehaviour {
     [ReadOnly] public Vector3 surfaceNormal = Vector3.up;
     [ReadOnly] public Vector3 primaryAxis = Vector3.forward;
     [ReadOnly] public Vector3 secondaryAxis = Vector3.right;
+
+    [SerializeField] private AudioClip burstClip, damageClip;
     // private KeyCode lockKey = KeyCode.None;
     // private Vector3 lockPrimAxis, lockSecAxis, lockNormal;
 
@@ -54,6 +56,7 @@ public class MovePlayer : MonoBehaviour {
 
     private float toAngleX, toAngleY = -20;
     private Material mat;
+    private AudioSource audioSource;
     private float matT = 0;
     public MovePlayer player;
     public bool shield, isMoving = false;
@@ -74,6 +77,7 @@ public class MovePlayer : MonoBehaviour {
                 j.StartFadeOut(1f);
             }
         }
+        audioSource.PlayOneShot(burstClip);
         var burst = Instantiate(Resources.Load("Burst"), transform.position, Quaternion.FromToRotation(Vector3.up, surfaceNormal)) as GameObject;
         burst.GetComponent<ParticleSystemRenderer>().material = material ?? mat;
     }
@@ -90,6 +94,7 @@ public class MovePlayer : MonoBehaviour {
     void Start() {
         transform.localPosition = new Vector3(startingPos.x, Pref.I.size, startingPos.y);
         mat = GetComponent<Renderer>().material;
+        audioSource = cam.GetComponent<AudioSource>();
         if (Pref.I.twoPlayers)
             player = GameObject.FindGameObjectsWithTag("Player").Where(x => x != gameObject).First().GetComponent<MovePlayer>();
     }
@@ -146,12 +151,14 @@ public class MovePlayer : MonoBehaviour {
             if (player && player.transform.position == toVec) {
                 StartCoroutine(player.Roll(anchor - surfaceNormal, axis, -surfaceNormal));
                 player.health += damage;
+                audioSource.PlayOneShot(damageClip);
             }
         } else {
             toVec += surfaceNormal;
             if (player && player.transform.position == toVec) {
                 StartCoroutine(player.Roll(anchor + newNormal, axis, newNormal));
                 player.health += damage;
+                audioSource.PlayOneShot(damageClip);
             }
         }
 

@@ -11,6 +11,7 @@ public class PowerupPlayer : MonoBehaviour {
     [SerializeField] private float roughness;
     [SerializeField] private float fadeInTime;
     [SerializeField] private float fadeOutTime;
+    [SerializeField] AudioClip shieldClip, shieldWaitClip, shieldRevClip, rebuildClip, speedClip;
 
     [Header("Powerup Speed")]
     [SerializeField] private float speedMultiplier;
@@ -20,8 +21,6 @@ public class PowerupPlayer : MonoBehaviour {
     [Header("Powerup Earthquake")]
     [SerializeField] private int quakeCount;
     [SerializeField] private float quakeWaitDuration;
-    [SerializeField] private Color quakeSkyColor;
-    [SerializeField] private float quakeSkySpeed;
 
     [Header("Powerup Rebuild")]
     [SerializeField] private int rebuildCount;
@@ -30,9 +29,11 @@ public class PowerupPlayer : MonoBehaviour {
     private InventorySystem inventorySystem;
     private MovePlayer player;
     private Camera cam;
+    private AudioSource audioSource;
     private CamFollow camFollow;
     private Explode explode;
     private Skybox sky;
+    private bool isSpeed = false;
     private Vector3[] randomVectors = new Vector3[] {
         Vector3.up,
         Vector3.down,
@@ -66,6 +67,7 @@ public class PowerupPlayer : MonoBehaviour {
         player = GetComponent<MovePlayer>();
         cam = player.cam.GetComponent<Camera>();
         camFollow = player.cam.transform.parent.GetComponent<CamFollow>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     IEnumerator Rebuild() {
@@ -75,6 +77,7 @@ public class PowerupPlayer : MonoBehaviour {
             StartCoroutine(explode.Rebuild(randomVectors[Random.Range(0, randomVectors.Length)]));
             yield return new WaitForSeconds(rebuildWaitDuration);
         }
+        audioSource.PlayOneShot(rebuildClip);
         yield return new WaitForSeconds(1f);
         sky.ResetColor();
     }
@@ -97,6 +100,7 @@ public class PowerupPlayer : MonoBehaviour {
     IEnumerator Speed() {
         player.rotateSpeed *= speedMultiplier;
         float init = cam.fieldOfView, final = init * fovMultiplier;
+        audioSource.PlayOneShot(speedClip);
         while (cam.fieldOfView < final - 1f) {
             cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, final, Time.deltaTime * fovSpeed);
             yield return null;
@@ -116,8 +120,11 @@ public class PowerupPlayer : MonoBehaviour {
         shield.camPos = cam.transform;
         player.shield = true;
         StartCoroutine(shield.DisolveShield(true));
+        audioSource.PlayOneShot(shieldClip);
+        audioSource.PlayOneShot(shieldWaitClip);
         yield return new WaitForSeconds(5f);
         StartCoroutine(shield.DisolveShield(false));
+        audioSource.PlayOneShot(shieldRevClip);
     }
 
     IEnumerator PowerupEffects() {
