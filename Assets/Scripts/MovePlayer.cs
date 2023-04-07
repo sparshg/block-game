@@ -51,7 +51,7 @@ public class MovePlayer : MonoBehaviour {
     [SerializeField] private float fadeInTime;
     [SerializeField] private float fadeOutTime;
 
-    private float toAngleX, toAngleY;
+    private float toAngleX, toAngleY = -20f;
     private Material mat;
     private float matT = 0;
     public bool shield = false, isMoving = false;

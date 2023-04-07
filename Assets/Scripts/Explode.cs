@@ -102,8 +102,8 @@ public class Explode : MonoBehaviour {
         }
     }
     IEnumerator Explosion(Transform[] children, Vector3 normal) {
-        int max = int.MinValue, min = int.MaxValue;
-        Vector3 maxChild = Vector3.zero, minChild = Vector3.zero;
+        int max = int.MinValue;
+        Vector3 maxChild = Vector3.zero, minChild;
 
         // Find top grid block
         foreach (var child in children) {
@@ -111,11 +111,8 @@ public class Explode : MonoBehaviour {
                 max = (int)Vector3.Dot(normal, child.localPosition);
                 maxChild = child.localPosition;
             }
-            if (Vector3.Dot(normal, child.localPosition) < min) {
-                min = (int)Vector3.Dot(normal, child.localPosition);
-                minChild = child.localPosition;
-            }
         }
+        minChild = maxChild - normal * (Pref.I.size - 1);
         // Cache Rigidbody
         Rigidbody[] rbs = new Rigidbody[children.Length];
         Vector3[][] way = new Vector3[children.Length][];
@@ -145,28 +142,26 @@ public class Explode : MonoBehaviour {
         detachedCubes[map[normal]].Add(children);
         detachedCubesSplines[map[normal]].Add(way);
         CameraShaker.Instance.ShakeOnce(magnitude, roughness, fadeInTime, fadeOutTime);
-        if (Physics.Raycast(maxChild, normal, out RaycastHit hit, 2f)) {
-            if (hit.collider.CompareTag("Player")) {
-                hit.collider.GetComponent<MovePlayer>().Burst(material: children[0].GetComponent<Renderer>().material);
-            } else if (hit.collider.tag == "Powerup") {
-                Destroy(hit.collider.gameObject);
-            }
-        }
-        if (Physics.Raycast(minChild, -normal, out RaycastHit hit2, 2f)) {
-            if (hit2.collider.CompareTag("Player")) {
-                hit2.collider.GetComponent<MovePlayer>().Burst(material: children[0].GetComponent<Renderer>().material);
-            } else if (hit2.collider.tag == "Powerup") {
-                Destroy(hit2.collider.gameObject);
-            }
-        }
+
 
         bool loop = true;
         while (loop) {
             loop = false;
             for (int i = 0; i < children.Length; i++) {
                 if (Vector3.Dot(normal, maxChild - children[i].localPosition) >= 0 && Vector3.Dot(normal, minChild - children[i].localPosition) <= 0) {
-                    rbs[i].GetComponent<BoxCollider>().enabled = true;
-                    rbs[i].GetComponent<BoxCollider>().isTrigger = false;
+                    if (Physics.Raycast(maxChild, normal, out RaycastHit h, 2f)) {
+                        if (h.collider.CompareTag("Player")) {
+                            h.collider.GetComponent<MovePlayer>().Burst(material: children[i].GetComponent<Renderer>().material);
+                        } else if (h.collider.tag == "Powerup") {
+                            Destroy(h.collider.gameObject);
+                        }
+                    } else if (Physics.Raycast(minChild, -normal, out RaycastHit h2, 2f)) {
+                        if (h2.collider.CompareTag("Player")) {
+                            h2.collider.GetComponent<MovePlayer>().Burst(material: children[i].GetComponent<Renderer>().material);
+                        } else if (h2.collider.tag == "Powerup") {
+                            Destroy(h2.collider.gameObject);
+                        }
+                    }
                     loop = true;
                 } else if (rbs[i].drag == 0) {
                     rbs[i].drag = explosionDrag;
@@ -175,7 +170,7 @@ public class Explode : MonoBehaviour {
                     rbs[i].AddTorque(Random.insideUnitSphere * explosionRotation, ForceMode.Impulse);
                     rbs[i].maxAngularVelocity = explosionRotation;
                     rbs[i].rotation = Random.rotation;
-                    rbs[i].GetComponent<BoxCollider>().enabled = false;
+                    rbs[i].GetComponent<BoxCollider>().isTrigger = false;
                 }
             }
             yield return null;
@@ -220,7 +215,12 @@ public class Explode : MonoBehaviour {
         bool finished = false;
         while (t >= 0) {
             for (int i = 0; i < children.Length; i++) {
-                children[i].position = pc[i].path.GetPointAtTime(rebuildCurve.Evaluate(t), EndOfPathInstruction.Stop);
+                try {
+                    children[i].position = pc[i].path.GetPointAtTime(rebuildCurve.Evaluate(t), EndOfPathInstruction.Stop);
+                } catch (System.Exception e) {
+                    Debug.Log(way[i]);
+                    Debug.Log(e);
+                }
                 children[i].rotation = pc[i].path.GetRotation(rebuildCurve.Evaluate(t), EndOfPathInstruction.Stop);
                 mats[i].SetFloat("_Intensity", rebuildCurve.Evaluate(t) * colorIntensity);
             }
