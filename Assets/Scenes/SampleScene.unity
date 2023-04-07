@@ -1254,7 +1254,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  startingPos: {x: 1, y: 1}
+  startingPos: {x: 2, y: 1}
   rotateCurve:
     serializedVersion: 2
     m_Curve:
@@ -1286,6 +1286,7 @@ MonoBehaviour:
   roughness: 6
   fadeInTime: 0
   fadeOutTime: 1.5
+  player: {fileID: 0}
   shield: 0
   isMoving: 0
 --- !u!114 &1037191035
@@ -2050,6 +2051,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   size: 10
+  twoPlayers: 1
 --- !u!114 &2019936865
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2318,6 +2320,7 @@ MonoBehaviour:
   roughness: 6
   fadeInTime: 0
   fadeOutTime: 1.5
+  player: {fileID: 0}
   shield: 0
   isMoving: 0
 --- !u!65 &2072824745
