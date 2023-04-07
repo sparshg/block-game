@@ -8,6 +8,8 @@ using UnityEngine;
 public class Explode : MonoBehaviour {
 
     [SerializeField] private GenerateGrid grid;
+    [SerializeField] private AudioClip[] explodeClips;
+    [SerializeField] private AudioClip rebuildClip;
     [SerializeField][Range(0.0f, 0.3f)] private float shakeAmount = 0.1f;
 
     [Header("Explosion Shake")]
@@ -71,6 +73,8 @@ public class Explode : MonoBehaviour {
                 return t.localPosition.x == toShake.x && t.localPosition.y == toShake.y && t != transform;
             }
         }).ToArray();
+        if (children.Length == 0) yield break;
+
 
         Material[] mats = new Material[children.Length];
         for (int i = 0; i < children.Length; i++) {
@@ -102,17 +106,26 @@ public class Explode : MonoBehaviour {
         }
     }
     IEnumerator Explosion(Transform[] children, Vector3 normal) {
-        int max = int.MinValue;
-        Vector3 maxChild = Vector3.zero, minChild;
+        int max = int.MinValue, min = int.MaxValue;
+        Transform maxObject = null, minObject = null;
 
         // Find top grid block
         foreach (var child in children) {
             if (Vector3.Dot(normal, child.localPosition) > max) {
                 max = (int)Vector3.Dot(normal, child.localPosition);
-                maxChild = child.localPosition;
+                maxObject = child;
+            }
+            if (Vector3.Dot(normal, child.localPosition) < min) {
+                min = (int)Vector3.Dot(normal, child.localPosition);
+                minObject = child;
             }
         }
-        minChild = maxChild - normal * (Pref.I.size - 1);
+        if (maxObject == null || minObject == null) {
+            Debug.Log(children.Length);
+
+            yield break;
+        }
+        Vector3 maxChild = maxObject.localPosition, minChild = minObject.localPosition;
         // Cache Rigidbody
         Rigidbody[] rbs = new Rigidbody[children.Length];
         Vector3[][] way = new Vector3[children.Length][];
@@ -142,7 +155,9 @@ public class Explode : MonoBehaviour {
         detachedCubes[map[normal]].Add(children);
         detachedCubesSplines[map[normal]].Add(way);
         CameraShaker.ShakeAll(magnitude, roughness, fadeInTime, fadeOutTime);
-
+        var r = explodeClips[Random.Range(0, explodeClips.Length)];
+        maxObject.GetComponent<AudioSource>().PlayOneShot(r);
+        minObject.GetComponent<AudioSource>().PlayOneShot(r);
 
         bool loop = true;
         while (loop) {
@@ -210,7 +225,7 @@ public class Explode : MonoBehaviour {
                 path.SetPoint(2, path.GetPoint(1));
             }
         }
-
+        children[0].GetComponent<AudioSource>().PlayOneShot(rebuildClip);
         float t = 1;
         bool finished = false;
         while (t >= 0) {

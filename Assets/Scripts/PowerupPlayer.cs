@@ -11,7 +11,7 @@ public class PowerupPlayer : MonoBehaviour {
     [SerializeField] private float roughness;
     [SerializeField] private float fadeInTime;
     [SerializeField] private float fadeOutTime;
-    [SerializeField] AudioClip shieldClip, shieldWaitClip, shieldRevClip, rebuildClip, speedClip;
+    [SerializeField] AudioClip shieldClip, shieldWaitClip, shieldRevClip, rebuildClip, speedClip, quakeClip;
 
     [Header("Powerup Speed")]
     [SerializeField] private float speedMultiplier;
@@ -86,8 +86,9 @@ public class PowerupPlayer : MonoBehaviour {
         sky.QuakeEffect();
         List<CameraShakeInstance> s = new List<CameraShakeInstance>();
         foreach (var i in CameraShaker.instanceList.Values) {
-            s.Add(i.StartShake(2f, 20f, 2f));
+            s.Add(i.StartShake(2f, 25f, 2f));
         }
+        audioSource.PlayOneShot(quakeClip);
         for (int i = 0; i < quakeCount; i++) {
             StartCoroutine(explode.Shake(true, randomVectors[Random.Range(0, randomVectors.Length)]));
             yield return new WaitForSeconds(quakeWaitDuration);

@@ -1184,6 +1184,7 @@ MonoBehaviour:
   shieldRevClip: {fileID: 0}
   rebuildClip: {fileID: 0}
   speedClip: {fileID: 0}
+  quakeClip: {fileID: 0}
   speedMultiplier: 1.4
   fovSpeed: 4
   fovMultiplier: 1.5
@@ -1935,7 +1936,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.8
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -2268,6 +2269,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 8801460}
+  explodeClips:
+  - {fileID: 8300000, guid: f01b8f78ab40c4b4484756cf070e0b8a, type: 3}
+  - {fileID: 8300000, guid: 66c1775611a2c4f88851afebf30a91c6, type: 3}
+  - {fileID: 8300000, guid: 3db920d200cbf4c468e09326dd5552d4, type: 3}
+  rebuildClip: {fileID: 8300000, guid: 50f6256dc01c64f568dfbf20b6987dca, type: 3}
   shakeAmount: 0.035
   magnitude: 2.5
   roughness: 3.5
@@ -2618,11 +2624,12 @@ MonoBehaviour:
   shieldRevClip: {fileID: 8300000, guid: 7481f8fcadc7e4dec885ac0b0b99e1d5, type: 3}
   rebuildClip: {fileID: 8300000, guid: c9db328a9f5ac4dedb8199d4699c9d88, type: 3}
   speedClip: {fileID: 8300000, guid: 1fb5f3c6c34444052a818552df6d2c7b, type: 3}
+  quakeClip: {fileID: 8300000, guid: 33ba9fc270b454308a5176dd2ddf2199, type: 3}
   speedMultiplier: 1.4
   fovSpeed: 4
   fovMultiplier: 1.5
   quakeCount: 10
-  quakeWaitDuration: 0.04
+  quakeWaitDuration: 0.08
   rebuildCount: 10
   rebuildWaitDuration: 0.05
 --- !u!54 &2072824749
