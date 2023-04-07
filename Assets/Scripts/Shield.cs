@@ -3,18 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Shield : MonoBehaviour {
-    Camera _cam;
+    public Transform camPos;
     Material mat;
     [SerializeField] AnimationCurve curve;
     [SerializeField] float speed;
     public MovePlayer player;
     [SerializeField] private float down;
     private void Awake() {
-        _cam = Camera.main;
         mat = GetComponent<Renderer>().material;
     }
     void Update() {
-        transform.forward = _cam.transform.position - transform.position;
+        transform.forward = camPos.position - transform.position;
         transform.position = player.transform.position - player.surfaceNormal * down;
         // if (Input.GetKeyDown(KeyCode.F)) {
         //     player.shield = !player.shield;

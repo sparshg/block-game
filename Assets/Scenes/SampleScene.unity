@@ -273,7 +273,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 70
+  field of view: 60
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -1146,7 +1146,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1037191032
 Transform:
   m_ObjectHideFlags: 0
@@ -1179,7 +1179,7 @@ MonoBehaviour:
   fadeInTime: 0.1
   fadeOutTime: 0.3
   speedMultiplier: 1.4
-  fovSpeed: 3
+  fovSpeed: 4
   fovMultiplier: 1.5
   quakeCount: 10
   quakeWaitDuration: 0.04
@@ -1406,7 +1406,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1114711786
 Transform:
   m_ObjectHideFlags: 0
@@ -1485,7 +1485,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1037191034}
-  elevation: 2
+  elevation: 3
   followSpeed: 10
 --- !u!1 &1276614439
 GameObject:
@@ -1779,11 +1779,11 @@ Camera:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 0.5
+    width: 1
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 70
+  field of view: 60
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -1862,7 +1862,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 2072824744}
-  elevation: 2
+  elevation: 3
   followSpeed: 10
 --- !u!1 &1809989302
 GameObject:
@@ -2051,7 +2051,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   size: 10
-  twoPlayers: 1
+  twoPlayers: 0
 --- !u!114 &2019936865
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2403,7 +2403,7 @@ MonoBehaviour:
   fadeInTime: 0.1
   fadeOutTime: 0.3
   speedMultiplier: 1.4
-  fovSpeed: 3
+  fovSpeed: 4
   fovMultiplier: 1.5
   quakeCount: 10
   quakeWaitDuration: 0.04

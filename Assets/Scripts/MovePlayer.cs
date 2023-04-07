@@ -43,7 +43,7 @@ public class MovePlayer : MonoBehaviour {
 
     [Header("Camera")]
     [SerializeField] private float camRotateSpeed;
-    [SerializeField] private CamRotate cam;
+    public CamRotate cam;
 
 
     [Header("Burst Shake")]
@@ -68,6 +68,11 @@ public class MovePlayer : MonoBehaviour {
         if (checkShield && shield) return;
         CameraShaker.ShakeAll(magnitude, roughness, fadeInTime, fadeOutTime);
         gameObject.SetActive(false);
+        foreach (var i in CameraShaker.instanceList.Values) {
+            foreach (var j in i.ShakeInstances) {
+                j.StartFadeOut(1f);
+            }
+        }
         var burst = Instantiate(Resources.Load("Burst"), transform.position, Quaternion.FromToRotation(Vector3.up, surfaceNormal)) as GameObject;
         burst.GetComponent<ParticleSystemRenderer>().material = material ?? mat;
     }

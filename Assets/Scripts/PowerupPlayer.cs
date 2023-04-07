@@ -27,6 +27,7 @@ public class PowerupPlayer : MonoBehaviour {
     private InventorySystem inventorySystem;
     private MovePlayer player;
     private Camera cam;
+    private CamFollow camFollow;
     private Explode explode;
     private Vector3[] randomVectors = new Vector3[] {
         Vector3.up,
@@ -58,31 +59,33 @@ public class PowerupPlayer : MonoBehaviour {
         explode = GameObject.FindGameObjectWithTag("GameController").GetComponent<Explode>();
         inventorySystem = GetComponent<InventorySystem>();
         player = GetComponent<MovePlayer>();
-        cam = Camera.main;
+        cam = player.cam.GetComponent<Camera>();
+        camFollow = player.cam.transform.parent.GetComponent<CamFollow>();
     }
 
 
 
     IEnumerator Rebuild() {
-        List<CameraShakeInstance> s = new List<CameraShakeInstance>();
-        foreach (var i in CameraShaker.instanceList.Values) {
-            s.Add(i.StartShake(2f, 20f, 2f));
-        }
+        // CameraShaker.ShakeAll(CameraShakePresets);
         for (int i = 0; i < rebuildCount; i++) {
             StartCoroutine(explode.Rebuild(randomVectors[Random.Range(0, randomVectors.Length)]));
             yield return new WaitForSeconds(rebuildWaitDuration);
         }
-        yield return new WaitForSeconds(2f);
-        foreach (var i in s) i.StartFadeOut(2f);
 
     }
 
     IEnumerator Earthquake() {
-        CameraShaker.ShakeAll(CameraShakePresets.Earthquake);
+        List<CameraShakeInstance> s = new List<CameraShakeInstance>();
+        foreach (var i in CameraShaker.instanceList.Values) {
+            s.Add(i.StartShake(2f, 20f, 2f));
+        }
         for (int i = 0; i < quakeCount; i++) {
             StartCoroutine(explode.Shake(true, randomVectors[Random.Range(0, randomVectors.Length)]));
             yield return new WaitForSeconds(quakeWaitDuration);
         }
+        yield return new WaitForSeconds(2f);
+        foreach (var i in s) i.StartFadeOut(1.5f);
+
     }
 
     IEnumerator Speed() {
@@ -104,6 +107,7 @@ public class PowerupPlayer : MonoBehaviour {
     IEnumerator SpawnShield() {
         var shield = (Instantiate(Resources.Load("Shield")) as GameObject).GetComponent<Shield>();
         shield.player = player;
+        shield.camPos = cam.transform;
         player.shield = true;
         StartCoroutine(shield.DisolveShield(true));
         yield return new WaitForSeconds(5f);
@@ -112,22 +116,31 @@ public class PowerupPlayer : MonoBehaviour {
 
     IEnumerator PowerupEffects() {
         CameraShaker.ShakeAll(magnitude, roughness, fadeInTime, fadeOutTime);
-        yield return new WaitForSeconds(2f);
-        // CameraShaker.ShakeAll.Shake(CameraShakePresets.Bump);
-        // yield return new WaitForSeconds(2f);
-        // CameraShaker.ShakeAll.Shake(CameraShakePresets.Earthquake);
-        // yield return new WaitForSeconds(2f);
-        // CameraShaker.ShakeAll.Shake(CameraShakePresets.Explosion);
-        // yield return new WaitForSeconds(2f);
-        // CameraShaker.ShakeAll.Shake(CameraShakePresets.Vibration);
-        // yield return new WaitForSeconds(2f);
-        // CameraShaker.ShakeAll.Shake(CameraShakePresets.RoughDriving);
-        // yield return new WaitForSeconds(2f);
-        // CameraShaker.ShakeAll.Shake(CameraShakePresets.HandheldCamera);
+        camFollow.transform.position -= player.surfaceNormal;
+        camFollow.followSpeed /= 2f;
+        yield return new WaitForSeconds(1f);
+        camFollow.followSpeed *= 2f;
+
+
     }
     void OnTriggerEnter(Collider other) {
         if (other.gameObject.CompareTag("Powerup")) {
             if (inventorySystem.inventory.Count < inventorySystem.maxInventorySize) {
+                StartCoroutine(PowerupEffects());
+                switch (Random.Range(0, 4)) {
+                    case 0:
+                        StartCoroutine(SpawnShield());
+                        break;
+                    case 1:
+                        StartCoroutine(Speed());
+                        break;
+                    case 2:
+                        StartCoroutine(Earthquake());
+                        break;
+                    case 3:
+                        StartCoroutine(Rebuild());
+                        break;
+                }
                 // inventorySystem.AddItem(other.gameObject);
                 Destroy(other.gameObject);
             }
