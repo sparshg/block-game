@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 public enum PowerupType {
     None,
     SpeedBoost,
@@ -36,6 +38,8 @@ public class Gameplay : MonoBehaviour {
             cam2.transform.parent.parent.gameObject.SetActive(false);
             player2.SetActive(false);
         }
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
 
         explode = GetComponent<Explode>();
         explodeWaitTime = new float[explodeInstances];
@@ -51,6 +55,14 @@ public class Gameplay : MonoBehaviour {
             tr[i] = 0f;
             rebuildWaitTime[i] = Random.Range(0f, explodeTime) * rebuildMultiplier;
         }
+    }
+    public void RestartGame() {
+        StartCoroutine(Restart());
+    }
+
+    public IEnumerator Restart() {
+        yield return new WaitForSeconds(2f);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
     void Update() {
         for (int i = 0; i < explodeInstances; i++) {

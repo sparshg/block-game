@@ -46,23 +46,23 @@ public class PowerupPlayer : MonoBehaviour {
         Vector3.forward,
         Vector3.back
     };
-    void OnGUI() {
-        if (GUI.Button(new Rect(0, 40, 100, 20), "Powerup Effect")) {
-            StartCoroutine(PowerupEffects());
-        }
-        if (GUI.Button(new Rect(100, 40, 100, 20), "Shield")) {
-            StartCoroutine(SpawnShield());
-        }
-        if (GUI.Button(new Rect(200, 40, 100, 20), "Speed")) {
-            StartCoroutine(Speed());
-        }
-        if (GUI.Button(new Rect(0, 60, 100, 20), "Earthquake")) {
-            StartCoroutine(Earthquake());
-        }
-        if (GUI.Button(new Rect(100, 60, 100, 20), "RebuildPowerup")) {
-            StartCoroutine(Rebuild());
-        }
-    }
+    // void OnGUI() {
+    //     if (GUI.Button(new Rect(0, 40, 100, 20), "Powerup Effect")) {
+    //         StartCoroutine(PowerupEffects());
+    //     }
+    //     if (GUI.Button(new Rect(100, 40, 100, 20), "Shield")) {
+    //         StartCoroutine(SpawnShield());
+    //     }
+    //     if (GUI.Button(new Rect(200, 40, 100, 20), "Speed")) {
+    //         StartCoroutine(Speed());
+    //     }
+    //     if (GUI.Button(new Rect(0, 60, 100, 20), "Earthquake")) {
+    //         StartCoroutine(Earthquake());
+    //     }
+    //     if (GUI.Button(new Rect(100, 60, 100, 20), "RebuildPowerup")) {
+    //         StartCoroutine(Rebuild());
+    //     }
+    // }
 
     void Awake() {
         explode = GameObject.FindGameObjectWithTag("GameController").GetComponent<Explode>();

@@ -1,9 +1,8 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 using System.Linq;
 using EZCameraShake;
+using UnityEngine.SceneManagement;
 
 public enum Controls {
     MousePriority,
@@ -11,9 +10,9 @@ public enum Controls {
 }
 
 public class MovePlayer : MonoBehaviour {
-    [ReadOnly] public Vector3 surfaceNormal = Vector3.up;
-    [ReadOnly] public Vector3 primaryAxis = Vector3.forward;
-    [ReadOnly] public Vector3 secondaryAxis = Vector3.right;
+    [HideInInspector] public Vector3 surfaceNormal = Vector3.up;
+    [HideInInspector] public Vector3 primaryAxis = Vector3.forward;
+    [HideInInspector] public Vector3 secondaryAxis = Vector3.right;
 
     [SerializeField] private AudioClip burstClip, damageClip;
     public Material camMat;
@@ -62,16 +61,17 @@ public class MovePlayer : MonoBehaviour {
     public MovePlayer player;
     public bool shield, isMoving = false;
     public float health, damage;
-
-    void OnGUI() {
-        if (GUI.Button(new Rect(0, 20, 100, 20), "Burst")) {
-            Burst();
-        }
-    }
+    private Gameplay manager;
+    // void OnGUI() {
+    //     if (GUI.Button(new Rect(0, 20, 100, 20), "Burst")) {
+    //         Burst();
+    //     }
+    // }
 
     public void Burst(bool checkShield = true, Material material = null) {
         if (checkShield && shield) return;
         CameraShaker.ShakeAll(magnitude, roughness, fadeInTime, fadeOutTime);
+        manager.RestartGame();
         gameObject.SetActive(false);
         foreach (var i in CameraShaker.instanceList.Values) {
             foreach (var j in i.ShakeInstances) {
@@ -96,8 +96,8 @@ public class MovePlayer : MonoBehaviour {
         transform.localPosition = new Vector3(startingPos.x, Pref.I.size, startingPos.y);
         mat = GetComponent<Renderer>().material;
         audioSource = cam.GetComponent<AudioSource>();
-        Debug.Log(audioSource);
         camMat.SetColor("_Color", Color.black);
+        manager = GameObject.FindGameObjectWithTag("GameController").GetComponent<Gameplay>();
         if (Pref.I.twoPlayers)
             player = GameObject.FindGameObjectsWithTag("Player").Where(x => x != gameObject).First().GetComponent<MovePlayer>();
     }
@@ -271,25 +271,5 @@ public class MovePlayer : MonoBehaviour {
     }
     void RollLeft() {
         StartCoroutine(Roll(transform.position - secondaryAxis * 0.5f - surfaceNormal * 0.5f, primaryAxis, -secondaryAxis));
-    }
-}
-
-
-// [ReadOnly] inspector attribute
-
-public class ReadOnlyAttribute : PropertyAttribute {
-}
-[CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
-public class ReadOnlyDrawer : PropertyDrawer {
-    public override float GetPropertyHeight(SerializedProperty property,
-                                            GUIContent label) {
-        return EditorGUI.GetPropertyHeight(property, label, true);
-    }
-    public override void OnGUI(Rect position,
-                               SerializedProperty property,
-                               GUIContent label) {
-        GUI.enabled = false;
-        EditorGUI.PropertyField(position, property, label, true);
-        GUI.enabled = true;
     }
 }

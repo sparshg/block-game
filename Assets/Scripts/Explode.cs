@@ -43,14 +43,14 @@ public class Explode : MonoBehaviour {
     };
     private MovePlayer player;
 
-    void OnGUI() {
-        if (GUI.Button(new Rect(100, 0, 100, 20), "Explode")) {
-            StartCoroutine(Shake(true, player.surfaceNormal));
-        }
-        if (GUI.Button(new Rect(100, 20, 100, 20), "Rebuild")) {
-            StartCoroutine(Rebuild(player.surfaceNormal));
-        }
-    }
+    // void OnGUI() {
+    //     if (GUI.Button(new Rect(100, 0, 100, 20), "Explode")) {
+    //         StartCoroutine(Shake(true, player.surfaceNormal));
+    //     }
+    //     if (GUI.Button(new Rect(100, 20, 100, 20), "Rebuild")) {
+    //         StartCoroutine(Rebuild(player.surfaceNormal));
+    //     }
+    // }
     void Awake() {
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<MovePlayer>();
     }
