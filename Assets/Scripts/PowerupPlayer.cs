@@ -6,12 +6,15 @@ using UnityEngine;
 public class PowerupPlayer : MonoBehaviour {
 
     // public CameraShakeInstance cameraShakePresets;
+    [Header("Powerup")]
+    [SerializeField] private AnimationCurve curve;
+    [SerializeField] private float speed;
     [Header("Powerup Shake")]
     [SerializeField] private float magnitude;
     [SerializeField] private float roughness;
     [SerializeField] private float fadeInTime;
     [SerializeField] private float fadeOutTime;
-    [SerializeField] AudioClip shieldClip, shieldWaitClip, shieldRevClip, rebuildClip, speedClip, quakeClip;
+    [SerializeField] AudioClip shieldClip, shieldWaitClip, shieldRevClip, rebuildClip, speedClip, quakeClip, powerupClip;
 
     [Header("Powerup Speed")]
     [SerializeField] private float speedMultiplier;
@@ -33,7 +36,8 @@ public class PowerupPlayer : MonoBehaviour {
     private CamFollow camFollow;
     private Explode explode;
     private Skybox sky;
-    private bool isSpeed = false;
+    private int speedCount = 0, shieldCount = 0;
+    private float initFov;
     private Vector3[] randomVectors = new Vector3[] {
         Vector3.up,
         Vector3.down,
@@ -68,6 +72,7 @@ public class PowerupPlayer : MonoBehaviour {
         cam = player.cam.GetComponent<Camera>();
         camFollow = player.cam.transform.parent.GetComponent<CamFollow>();
         audioSource = GetComponent<AudioSource>();
+        initFov = cam.fieldOfView;
     }
 
     IEnumerator Rebuild() {
@@ -99,41 +104,59 @@ public class PowerupPlayer : MonoBehaviour {
     }
 
     IEnumerator Speed() {
-        player.rotateSpeed *= speedMultiplier;
-        float init = cam.fieldOfView, final = init * fovMultiplier;
+        speedCount++;
         audioSource.PlayOneShot(speedClip);
-        while (cam.fieldOfView < final - 1f) {
-            cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, final, Time.deltaTime * fovSpeed);
-            yield return null;
+        if (speedCount == 1) {
+            player.rotateSpeed *= speedMultiplier;
+            float final = initFov * fovMultiplier;
+            while (cam.fieldOfView < final - 1f) {
+                cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, final, Time.deltaTime * fovSpeed);
+                yield return null;
+            }
         }
         yield return new WaitForSeconds(5f);
-        player.rotateSpeed /= speedMultiplier;
-        while (cam.fieldOfView > init + 1f) {
-            cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, init, Time.deltaTime * fovSpeed);
-            yield return null;
+        if (speedCount == 1) {
+            player.rotateSpeed /= speedMultiplier;
+            while (cam.fieldOfView > initFov + 1f) {
+                cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, initFov, Time.deltaTime * fovSpeed);
+                yield return null;
+            }
+            cam.fieldOfView = initFov;
         }
-        cam.fieldOfView = init;
+        speedCount--;
     }
 
     IEnumerator SpawnShield() {
-        var shield = (Instantiate(Resources.Load("Shield")) as GameObject).GetComponent<Shield>();
-        shield.player = player;
-        shield.camPos = cam.transform;
+        shieldCount++;
+        var shieldObject = (Instantiate(Resources.Load("Shield")) as GameObject).GetComponent<Shield>();
+        shieldObject.player = player;
+        shieldObject.camPos = cam.transform;
+        StartCoroutine(shieldObject.DisolveShield(true));
         player.shield = true;
-        StartCoroutine(shield.DisolveShield(true));
         audioSource.PlayOneShot(shieldClip);
         audioSource.PlayOneShot(shieldWaitClip);
         yield return new WaitForSeconds(5f);
-        StartCoroutine(shield.DisolveShield(false));
+        StartCoroutine(shieldObject.DisolveShield(false));
         audioSource.PlayOneShot(shieldRevClip);
+        if (shieldCount == 1) {
+            player.shield = false;
+        }
+        shieldCount--;
     }
 
     IEnumerator PowerupEffects() {
+        audioSource.PlayOneShot(powerupClip);
         CameraShaker.ShakeAll(magnitude, roughness, fadeInTime, fadeOutTime);
-        camFollow.transform.position -= player.surfaceNormal;
-        camFollow.followSpeed /= 2f;
-        yield return new WaitForSeconds(1f);
-        camFollow.followSpeed *= 2f;
+        float t = 0;
+        player.camMat.SetFloat("_RippleAmount", 0.06f);
+        camFollow.transform.position -= player.surfaceNormal * 0.5f;
+        while (t < 1f) {
+            t += Time.deltaTime * speed;
+            player.camMat.SetFloat("_RippleT", curve.Evaluate(t) * 1f);
+            yield return null;
+        }
+        player.camMat.SetFloat("_RippleT", 0f);
+        player.camMat.SetFloat("_RippleAmount", 0f);
     }
 
     void OnTriggerEnter(Collider other) {

@@ -184,6 +184,7 @@ GameObject:
   - component: {fileID: 107153820}
   - component: {fileID: 107153819}
   - component: {fileID: 107153818}
+  - component: {fileID: 107153823}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -224,7 +225,7 @@ MonoBehaviour:
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
   m_Cameras: []
-  m_RendererIndex: -1
+  m_RendererIndex: 1
   m_VolumeLayerMask:
     serializedVersion: 2
     m_Bits: 1
@@ -306,6 +307,102 @@ Transform:
   m_Father: {fileID: 1164256191}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &107153823
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 107153817}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &107322179
 GameObject:
   m_ObjectHideFlags: 0
@@ -1175,16 +1272,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ceabf88efb07e474b89fa1df7d349f43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  curve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  speed: 0
   magnitude: 2
   roughness: 3
   fadeInTime: 0.1
   fadeOutTime: 0.3
-  shieldClip: {fileID: 0}
-  shieldWaitClip: {fileID: 0}
-  shieldRevClip: {fileID: 0}
-  rebuildClip: {fileID: 0}
-  speedClip: {fileID: 0}
-  quakeClip: {fileID: 0}
+  shieldClip: {fileID: 8300000, guid: b5a481eab1d924c39981a9bcd84a2325, type: 3}
+  shieldWaitClip: {fileID: 8300000, guid: b922e641c6e8a4a50a453e56e60e6493, type: 3}
+  shieldRevClip: {fileID: 8300000, guid: 7481f8fcadc7e4dec885ac0b0b99e1d5, type: 3}
+  rebuildClip: {fileID: 8300000, guid: c9db328a9f5ac4dedb8199d4699c9d88, type: 3}
+  speedClip: {fileID: 8300000, guid: 1fb5f3c6c34444052a818552df6d2c7b, type: 3}
+  quakeClip: {fileID: 8300000, guid: 33ba9fc270b454308a5176dd2ddf2199, type: 3}
+  powerupClip: {fileID: 8300000, guid: 2bc4c60d219784d58ac42eade2be2fb2, type: 3}
   speedMultiplier: 1.4
   fovSpeed: 4
   fovMultiplier: 1.5
@@ -1207,8 +1312,9 @@ MonoBehaviour:
   surfaceNormal: {x: 0, y: 1, z: 0}
   primaryAxis: {x: 0, y: 0, z: 1}
   secondaryAxis: {x: 1, y: 0, z: 0}
-  burstClip: {fileID: 0}
-  damageClip: {fileID: 0}
+  burstClip: {fileID: 8300000, guid: e21e40859382042ba8e4a783b5496691, type: 3}
+  damageClip: {fileID: 8300000, guid: 5bad86d369557417fae8d0c015cd1115, type: 3}
+  camMat: {fileID: 2100000, guid: 4b87dabd6eb624e2cbaa8d78119c75c6, type: 2}
   upKey: 119
   downKey: 115
   leftKey: 97
@@ -1422,7 +1528,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 30
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -1457,7 +1563,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -1842,7 +1948,7 @@ MonoBehaviour:
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
   m_Cameras: []
-  m_RendererIndex: -1
+  m_RendererIndex: 0
   m_VolumeLayerMask:
     serializedVersion: 2
     m_Bits: 1
@@ -1936,7 +2042,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 0.8
+  m_Volume: 1
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -2391,6 +2497,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   explodeTime: 7
   rebuildMultiplier: 1.5
+  cam1: {fileID: 1715143609}
+  cam2: {fileID: 107153821}
+  player1: {fileID: 2072824742}
+  player2: {fileID: 1037191031}
   explodeInstances: 3
   rebuildInstances: 1
 --- !u!1 &2072824742
@@ -2449,6 +2559,7 @@ MonoBehaviour:
   secondaryAxis: {x: 1, y: 0, z: 0}
   burstClip: {fileID: 8300000, guid: e21e40859382042ba8e4a783b5496691, type: 3}
   damageClip: {fileID: 8300000, guid: 5bad86d369557417fae8d0c015cd1115, type: 3}
+  camMat: {fileID: 2100000, guid: eec9eb04bce1b4bb2a029457700f2c8e, type: 2}
   upKey: 273
   downKey: 274
   leftKey: 276
@@ -2615,6 +2726,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ceabf88efb07e474b89fa1df7d349f43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 3.7554634
+      outSlope: 3.7554634
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.10430038
+      value: 0.39169624
+      inSlope: 2.725792
+      outSlope: 2.725792
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.3386066
+      value: 0.78910786
+      inSlope: 1.0074905
+      outSlope: 1.0074905
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  speed: 2
   magnitude: 2
   roughness: 3
   fadeInTime: 0.1
@@ -2625,6 +2779,7 @@ MonoBehaviour:
   rebuildClip: {fileID: 8300000, guid: c9db328a9f5ac4dedb8199d4699c9d88, type: 3}
   speedClip: {fileID: 8300000, guid: 1fb5f3c6c34444052a818552df6d2c7b, type: 3}
   quakeClip: {fileID: 8300000, guid: 33ba9fc270b454308a5176dd2ddf2199, type: 3}
+  powerupClip: {fileID: 8300000, guid: 2bc4c60d219784d58ac42eade2be2fb2, type: 3}
   speedMultiplier: 1.4
   fovSpeed: 4
   fovMultiplier: 1.5
@@ -2691,7 +2846,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 30
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0

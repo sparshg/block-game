@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1110266845597378963}
   - component: {fileID: 5832261255559579217}
   - component: {fileID: 2613362243275278375}
-  - component: {fileID: 5909208029303621547}
+  - component: {fileID: 1488156940630017659}
   m_Layer: 0
   m_Name: Grid
   m_TagString: Grid
@@ -115,7 +115,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!82 &5909208029303621547
+--- !u!82 &1488156940630017659
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -126,7 +126,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 0
+  m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -146,58 +146,58 @@ AudioSource:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0.05
+      time: 0.033333335
       value: 1
-      inSlope: -8.182054
-      outSlope: -8.182054
+      inSlope: -3.960469
+      outSlope: -3.960469
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
       outWeight: 1
     - serializedVersion: 3
-      time: 0.09577331
-      value: 0.75
-      inSlope: -2.532169
-      outSlope: -2.532169
+      time: 0.14111048
+      value: 0.6539993
+      inSlope: -2.6032524
+      outSlope: -2.6032524
       tangentMode: 0
       weightedMode: 0
-      inWeight: 1
+      inWeight: 0
       outWeight: 1
     - serializedVersion: 3
-      time: 0.19154662
-      value: 0.55000305
-      inSlope: -1.8778731
-      outSlope: -1.8778731
+      time: 0.25244343
+      value: 0.4186554
+      inSlope: -1.5190868
+      outSlope: -1.5190868
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.94041544
-      outWeight: 0.8015318
+      inWeight: 0
+      outWeight: 1
     - serializedVersion: 3
-      time: 0.37886658
-      value: 0.31251526
-      inSlope: -0.87177444
-      outSlope: -0.87177444
+      time: 0.40562084
+      value: 0.23500061
+      inSlope: -0.39708626
+      outSlope: -0.39708626
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.80363446
+      inWeight: 0
+      outWeight: 1
+    - serializedVersion: 3
+      time: 0.5978475
+      value: 0.16516113
+      inSlope: -0.11723435
+      outSlope: -0.11723435
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.6604584
-      value: 0.1749878
-      inSlope: -0.24539837
-      outSlope: -0.24539837
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.7237383
-      outWeight: 0.6002519
-    - serializedVersion: 3
       time: 1
-      value: 0.13749391
-      inSlope: 0.027602129
-      outSlope: 0.027602129
+      value: 0.13599446
+      inSlope: -0.033346657
+      outSlope: -0.033346657
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.98525107
+      inWeight: 0
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2

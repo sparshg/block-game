@@ -16,6 +16,7 @@ public class MovePlayer : MonoBehaviour {
     [ReadOnly] public Vector3 secondaryAxis = Vector3.right;
 
     [SerializeField] private AudioClip burstClip, damageClip;
+    public Material camMat;
     // private KeyCode lockKey = KeyCode.None;
     // private Vector3 lockPrimAxis, lockSecAxis, lockNormal;
 
@@ -95,6 +96,8 @@ public class MovePlayer : MonoBehaviour {
         transform.localPosition = new Vector3(startingPos.x, Pref.I.size, startingPos.y);
         mat = GetComponent<Renderer>().material;
         audioSource = cam.GetComponent<AudioSource>();
+        Debug.Log(audioSource);
+        camMat.SetColor("_Color", Color.black);
         if (Pref.I.twoPlayers)
             player = GameObject.FindGameObjectsWithTag("Player").Where(x => x != gameObject).First().GetComponent<MovePlayer>();
     }
@@ -113,15 +116,18 @@ public class MovePlayer : MonoBehaviour {
                 matT += Time.deltaTime * edgeSpeed;
                 mat.SetFloat("_Intensity", edgeCurve.Evaluate(matT) * edgeIntensity);
                 mat.SetFloat("_w", 1 - edgeCurve.Evaluate(matT) * edgeWidth);
+                camMat.SetColor("_Color", new Color(edgeCurve.Evaluate(matT), 0, 0, 1));
             }
         } else if (matT > health) {
             matT = Mathf.Max(health, matT - Time.deltaTime * edgeSpeed);
             mat.SetFloat("_Intensity", edgeCurve.Evaluate(matT) * edgeIntensity);
             mat.SetFloat("_w", 1 - edgeCurve.Evaluate(matT) * edgeWidth);
+            camMat.SetColor("_Color", new Color(edgeCurve.Evaluate(matT), 0, 0, 1));
         } else if (matT < health) {
             matT = Mathf.Min(health, matT + Time.deltaTime * edgeSpeed);
             mat.SetFloat("_Intensity", edgeCurve.Evaluate(matT) * edgeIntensity);
             mat.SetFloat("_w", 1 - edgeCurve.Evaluate(matT) * edgeWidth);
+            camMat.SetColor("_Color", new Color(edgeCurve.Evaluate(matT), 0, 0, 1));
         }
         if (matT >= 1) {
             matT = 0;

@@ -11,6 +11,8 @@ public class Gameplay : MonoBehaviour {
     private Explode explode;
 
     [SerializeField] private float explodeTime, rebuildMultiplier;
+    [SerializeField] private Camera cam1, cam2;
+    [SerializeField] private GameObject player1, player2;
 
     [SerializeField] private int explodeInstances, rebuildInstances;
     private Vector3[] randomVectors = new Vector3[] {
@@ -24,6 +26,17 @@ public class Gameplay : MonoBehaviour {
     private float[] te, tr, explodeWaitTime, rebuildWaitTime;
 
     void Awake() {
+        if (Pref.I.twoPlayers) {
+            cam1.rect = new Rect(0f, 0f, 0.5f, 1f);
+            cam2.rect = new Rect(0.5f, 0f, 0.5f, 1f);
+            cam2.transform.parent.parent.gameObject.SetActive(true);
+            player2.SetActive(true);
+        } else {
+            cam1.rect = new Rect(0f, 0f, 1f, 1f);
+            cam2.transform.parent.parent.gameObject.SetActive(false);
+            player2.SetActive(false);
+        }
+
         explode = GetComponent<Explode>();
         explodeWaitTime = new float[explodeInstances];
         rebuildWaitTime = new float[rebuildInstances];
