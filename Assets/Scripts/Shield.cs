@@ -15,13 +15,9 @@ public class Shield : MonoBehaviour {
     void Update() {
         transform.forward = camPos.position - transform.position;
         transform.position = player.transform.position - player.surfaceNormal * down;
-        // if (Input.GetKeyDown(KeyCode.F)) {
-        //     player.shield = !player.shield;
-        //     StartCoroutine(DisolveShield(player.shield));
-        // }
     }
 
-    public IEnumerator DisolveShield(bool target) {
+    public IEnumerator DisolveShield(bool target, bool removeShield = false) {
         float t = 1 - mat.GetFloat("_Disolve");
         while (target && t < 1) {
             mat.SetFloat("_Disolve", 1 - curve.Evaluate(t));
@@ -34,6 +30,7 @@ public class Shield : MonoBehaviour {
             yield return null;
         }
         if (!target) {
+            if (removeShield) player.shield = false;
             if (!player.isMoving && !player.CheckBelow()) player.Burst();
             Destroy(gameObject);
         }

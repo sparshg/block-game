@@ -136,11 +136,8 @@ public class PowerupPlayer : MonoBehaviour {
         audioSource.PlayOneShot(shieldClip);
         audioSource.PlayOneShot(shieldWaitClip);
         yield return new WaitForSeconds(5f);
-        StartCoroutine(shieldObject.DisolveShield(false));
+        StartCoroutine(shieldObject.DisolveShield(false, shieldCount == 1 ? true : false));
         audioSource.PlayOneShot(shieldRevClip);
-        if (shieldCount == 1) {
-            player.shield = false;
-        }
         shieldCount--;
     }
 
