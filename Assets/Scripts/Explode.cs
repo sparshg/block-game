@@ -92,11 +92,7 @@ public class Explode : MonoBehaviour {
             }
             yield return null;
             foreach (var child in children) {
-                child.localPosition = new Vector3(
-                    Mathf.RoundToInt(child.localPosition.x),
-                    Mathf.RoundToInt(child.localPosition.y),
-                    Mathf.RoundToInt(child.localPosition.z)
-                );
+                child.localPosition = Vector3Int.RoundToInt(child.localPosition);
             }
         }
 
@@ -247,11 +243,8 @@ public class Explode : MonoBehaviour {
             }
         }
         for (int i = 0; i < children.Length; i++) {
-            children[i].localPosition = new Vector3(
-                Mathf.RoundToInt(children[i].localPosition.x),
-                Mathf.RoundToInt(children[i].localPosition.y),
-                Mathf.RoundToInt(children[i].localPosition.z)
-            );
+            children[i].localPosition = Vector3Int.RoundToInt(children[i].localPosition);
+
             mats[i].SetFloat("_Intensity", 0f);
             Destroy(pc[i].gameObject);
         }

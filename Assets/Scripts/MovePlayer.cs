@@ -13,21 +13,24 @@ public class MovePlayer : MonoBehaviour {
     [HideInInspector] public Vector3 surfaceNormal = Vector3.up;
     [HideInInspector] public Vector3 primaryAxis = Vector3.forward;
     [HideInInspector] public Vector3 secondaryAxis = Vector3.right;
+    public Vector3 toVec;
 
     [SerializeField] private AudioClip burstClip, damageClip;
     public Material camMat;
+    [ColorUsageAttribute(false, true)]
+    public Color matColor;
     // private KeyCode lockKey = KeyCode.None;
     // private Vector3 lockPrimAxis, lockSecAxis, lockNormal;
 
     [Header("Keys")]
-    [SerializeField] private KeyCode upKey;
-    [SerializeField] private KeyCode downKey;
-    [SerializeField] private KeyCode leftKey;
-    [SerializeField] private KeyCode rightKey;
-    [SerializeField] private KeyCode leftRot;
-    [SerializeField] private KeyCode rightRot;
-    [SerializeField] private KeyCode upRot;
-    [SerializeField] private KeyCode downRot;
+    public KeyCode upKey;
+    public KeyCode downKey;
+    public KeyCode leftKey;
+    public KeyCode rightKey;
+    public KeyCode leftRot;
+    public KeyCode rightRot;
+    public KeyCode upRot;
+    public KeyCode downRot;
     public Controls controls;
 
     [Header("Edge")]
@@ -54,13 +57,13 @@ public class MovePlayer : MonoBehaviour {
     [SerializeField] private float fadeInTime;
     [SerializeField] private float fadeOutTime;
 
-    private float toAngleX, toAngleY = -20;
+    [SerializeField] private float toAngleX, toAngleY = -20;
     private Material mat;
     private AudioSource audioSource;
     private float matT = 0;
     public MovePlayer player;
     public bool shield, isMoving = false;
-    public float health, damage;
+    public float health, damage, hue;
     private Gameplay manager;
     // void OnGUI() {
     //     if (GUI.Button(new Rect(0, 20, 100, 20), "Burst")) {
@@ -94,12 +97,17 @@ public class MovePlayer : MonoBehaviour {
 
     void Start() {
         transform.localPosition = new Vector3(startingPos.x, Pref.I.size, startingPos.y);
+        toVec = transform.position;
         mat = GetComponent<Renderer>().material;
         audioSource = cam.GetComponent<AudioSource>();
-        camMat.SetColor("_Color", Color.black);
+        Color.RGBToHSV(matColor, out hue, out _, out _);
+        camMat.SetColor("_Color", Color.HSVToRGB(hue, 1, 0));
+        mat.SetColor("_Color", matColor);
         manager = GameObject.FindGameObjectWithTag("GameController").GetComponent<Gameplay>();
-        if (Pref.I.twoPlayers)
+        if (Pref.I.twoPlayers) {
+            health = 0.1f;
             player = GameObject.FindGameObjectsWithTag("Player").Where(x => x != gameObject).First().GetComponent<MovePlayer>();
+        }
     }
 
     void Update() {
@@ -116,18 +124,18 @@ public class MovePlayer : MonoBehaviour {
                 matT += Time.deltaTime * edgeSpeed;
                 mat.SetFloat("_Intensity", edgeCurve.Evaluate(matT) * edgeIntensity);
                 mat.SetFloat("_w", 1 - edgeCurve.Evaluate(matT) * edgeWidth);
-                camMat.SetColor("_Color", new Color(edgeCurve.Evaluate(matT), 0, 0, 1));
+                camMat.SetColor("_Color", Color.HSVToRGB(hue, 1, edgeCurve.Evaluate(matT)));
             }
         } else if (matT > health) {
             matT = Mathf.Max(health, matT - Time.deltaTime * edgeSpeed);
             mat.SetFloat("_Intensity", edgeCurve.Evaluate(matT) * edgeIntensity);
             mat.SetFloat("_w", 1 - edgeCurve.Evaluate(matT) * edgeWidth);
-            camMat.SetColor("_Color", new Color(edgeCurve.Evaluate(matT), 0, 0, 1));
+            camMat.SetColor("_Color", Color.HSVToRGB(hue, 1, edgeCurve.Evaluate(matT)));
         } else if (matT < health) {
             matT = Mathf.Min(health, matT + Time.deltaTime * edgeSpeed);
             mat.SetFloat("_Intensity", edgeCurve.Evaluate(matT) * edgeIntensity);
             mat.SetFloat("_w", 1 - edgeCurve.Evaluate(matT) * edgeWidth);
-            camMat.SetColor("_Color", new Color(edgeCurve.Evaluate(matT), 0, 0, 1));
+            camMat.SetColor("_Color", Color.HSVToRGB(hue, 1, edgeCurve.Evaluate(matT)));
         }
         if (matT >= 1) {
             matT = 0;
@@ -148,20 +156,20 @@ public class MovePlayer : MonoBehaviour {
         isMoving = true;
         bool checkedBelow = false;
         float angle = 90f, _angle = 0f, _rotateSpeed = rotateSpeed, t1 = rotateCurve.Evaluate(0), t;
-        Vector3 belowCube = transform.position - surfaceNormal;
-        Vector3 toVec = belowCube + newNormal;
+        Vector3 belowCube = toVec - surfaceNormal;
+        toVec = belowCube + newNormal;
         if (toVec.x == Pref.I.size || toVec.y == Pref.I.size || toVec.z == Pref.I.size || toVec.x < 0 || toVec.y < 0 || toVec.z < 0) {
             angle = 180f;
             _rotateSpeed *= 2f;
             cam.SetIntermediateRotation(surfaceNormal);
-            if (player && player.transform.position == toVec) {
+            if (player && player.toVec == toVec && !player.shield) {
                 StartCoroutine(player.Roll(anchor - surfaceNormal, axis, -surfaceNormal));
                 player.health += damage;
                 audioSource.PlayOneShot(damageClip);
             }
         } else {
             toVec += surfaceNormal;
-            if (player && player.transform.position == toVec) {
+            if (player && player.toVec == toVec && !player.shield) {
                 StartCoroutine(player.Roll(anchor + newNormal, axis, newNormal));
                 player.health += damage;
                 audioSource.PlayOneShot(damageClip);
@@ -201,7 +209,7 @@ public class MovePlayer : MonoBehaviour {
         else if (Input.GetKeyUp(upRot) || Input.GetKeyUp(downRot)) toAngleY = 0f;
 
         cam.turn.x = Mathf.LerpAngle(cam.turn.x, toAngleX, Time.deltaTime * camRotateSpeed);
-        cam.turn.y = Mathf.Lerp(cam.turn.y, toAngleY, Time.deltaTime * camRotateSpeed);
+        cam.turn.y = Mathf.Lerp(cam.turn.y, toAngleY - 20f, Time.deltaTime * camRotateSpeed);
 
         if (isMoving) return;
 

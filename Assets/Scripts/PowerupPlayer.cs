@@ -73,6 +73,8 @@ public class PowerupPlayer : MonoBehaviour {
         camFollow = player.cam.transform.parent.GetComponent<CamFollow>();
         audioSource = GetComponent<AudioSource>();
         initFov = cam.fieldOfView;
+        player.camMat.SetFloat("_RippleAmount", 0f);
+
     }
 
     IEnumerator Rebuild() {
