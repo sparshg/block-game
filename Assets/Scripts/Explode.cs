@@ -30,7 +30,6 @@ public class Explode : MonoBehaviour {
     [SerializeField] private float explosionDrag;
     [SerializeField] private float rebuildSpeed;
 
-    // List<Vector2>[] voids = new List<Vector2>[3];
     List<Transform[]>[] detachedCubes = new List<Transform[]>[3];
     List<Vector3[][]>[] detachedCubesSplines = new List<Vector3[][]>[3];
     Dictionary<Vector3, int> map = new Dictionary<Vector3, int>() {
@@ -152,8 +151,12 @@ public class Explode : MonoBehaviour {
         detachedCubesSplines[map[normal]].Add(way);
         CameraShaker.ShakeAll(magnitude, roughness, fadeInTime, fadeOutTime);
         var r = explodeClips[Random.Range(0, explodeClips.Length)];
-        maxObject.GetComponent<AudioSource>().PlayOneShot(r);
-        minObject.GetComponent<AudioSource>().PlayOneShot(r);
+        var a1 = maxObject.GetComponent<AudioSource>();
+        var a2 = minObject.GetComponent<AudioSource>();
+        a1.enabled = true;
+        a2.enabled = true;
+        a1.PlayOneShot(r);
+        a2.PlayOneShot(r);
 
         bool loop = true;
         while (loop) {
@@ -222,6 +225,7 @@ public class Explode : MonoBehaviour {
             }
         }
         children[0].GetComponent<AudioSource>().PlayOneShot(rebuildClip);
+        children[children.Length - 1].GetComponent<AudioSource>().PlayOneShot(rebuildClip);
         float t = 1;
         bool finished = false;
         while (t >= 0) {

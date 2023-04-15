@@ -13,7 +13,8 @@ public class MovePlayer : MonoBehaviour {
     [HideInInspector] public Vector3 surfaceNormal = Vector3.up;
     [HideInInspector] public Vector3 primaryAxis = Vector3.forward;
     [HideInInspector] public Vector3 secondaryAxis = Vector3.right;
-    public Vector3 toVec;
+    private Vector3 toVec, anchor, axis;
+    private float angle = 90f, _angle = 0f;
 
     [SerializeField] private AudioClip burstClip, damageClip;
     public Material camMat;
@@ -155,26 +156,26 @@ public class MovePlayer : MonoBehaviour {
     public IEnumerator Roll(Vector3 anchor, Vector3 axis, Vector3 newNormal) {
         isMoving = true;
         bool checkedBelow = false;
-        float angle = 90f, _angle = 0f, _rotateSpeed = rotateSpeed, t1 = rotateCurve.Evaluate(0), t;
-        Vector3 belowCube = toVec - surfaceNormal;
-        toVec = belowCube + newNormal;
+        _angle = 0f;
+        float _rotateSpeed = rotateSpeed, t1 = rotateCurve.Evaluate(0), t;
+        Vector3 belowCube = toVec - newNormal;
         if (toVec.x == Pref.I.size || toVec.y == Pref.I.size || toVec.z == Pref.I.size || toVec.x < 0 || toVec.y < 0 || toVec.z < 0) {
-            angle = 180f;
             _rotateSpeed *= 2f;
             cam.SetIntermediateRotation(surfaceNormal);
             if (player && player.toVec == toVec && !player.shield) {
-                StartCoroutine(player.Roll(anchor - surfaceNormal, axis, -surfaceNormal));
+                player.InterruptRoll(anchor - surfaceNormal, axis, -surfaceNormal);
                 player.health += damage;
                 audioSource.PlayOneShot(damageClip);
             }
         } else {
             toVec += surfaceNormal;
             if (player && player.toVec == toVec && !player.shield) {
-                StartCoroutine(player.Roll(anchor + newNormal, axis, newNormal));
+                player.InterruptRoll(anchor + newNormal, axis, newNormal);
                 player.health += damage;
                 audioSource.PlayOneShot(damageClip);
             }
         }
+
 
         while (true) {
             _angle += _rotateSpeed * Time.deltaTime;
@@ -186,6 +187,7 @@ public class MovePlayer : MonoBehaviour {
                     Burst();
                 }
             }
+            // Quaternion.RotateTowards(transform.rotation, Quaternion.identity, _angle)
             transform.RotateAround(anchor, axis, (t - t1) * angle);
             t1 = t;
             if (angle == 180f) surfaceNormal = (transform.position - belowCube).normalized;
@@ -211,20 +213,41 @@ public class MovePlayer : MonoBehaviour {
         cam.turn.x = Mathf.LerpAngle(cam.turn.x, toAngleX, Time.deltaTime * camRotateSpeed);
         cam.turn.y = Mathf.Lerp(cam.turn.y, toAngleY - 20f, Time.deltaTime * camRotateSpeed);
 
-        if (isMoving) return;
-
-        if (Input.GetKey(upKey)) RollUp();
-        else if (Input.GetKey(downKey)) RollDown();
-        else if (Input.GetKey(rightKey)) RollRight();
-        else if (Input.GetKey(leftKey)) RollLeft();
+        mousePriorityControls();
     }
 
     void mousePriorityControls() {
         if (isMoving) return;
-        if (Input.GetKey(upKey)) RollUp();
-        else if (Input.GetKey(downKey)) RollDown();
-        else if (Input.GetKey(rightKey)) RollRight();
-        else if (Input.GetKey(leftKey)) RollLeft();
+        Vector3 _newNormal;
+        if (Input.GetKey(upKey)) RollUp(out anchor, out axis, out _newNormal);
+        else if (Input.GetKey(downKey)) RollDown(out anchor, out axis, out _newNormal);
+        else if (Input.GetKey(rightKey)) RollRight(out anchor, out axis, out _newNormal);
+        else if (Input.GetKey(leftKey)) RollLeft(out anchor, out axis, out _newNormal);
+        else return;
+        toVec += _newNormal - surfaceNormal;
+        if (toVec.x == Pref.I.size || toVec.y == Pref.I.size || toVec.z == Pref.I.size || toVec.x < 0 || toVec.y < 0 || toVec.z < 0) angle = 180f;
+        else angle = 90f;
+        StartCoroutine(Roll(anchor, axis, _newNormal));
+    }
+
+    void InterruptRoll(Vector3 _anchor, Vector3 _axis, Vector3 _newNormal) {
+        float _newAngle = 90f;
+        toVec += _newNormal - surfaceNormal;
+        if (toVec.x == Pref.I.size || toVec.y == Pref.I.size || toVec.z == Pref.I.size || toVec.x < 0 || toVec.y < 0 || toVec.z < 0) {
+            _newAngle = 180f;
+        }
+        if (isMoving) {
+            StopAllCoroutines();
+            (Quaternion.AngleAxis(_newAngle, _axis) * Quaternion.AngleAxis(angle - rotateCurve.Evaluate(_angle / angle) * angle, axis)).ToAngleAxis(out _newAngle, out _axis);
+            anchor += _newNormal * 0.5f;
+        } else {
+            anchor = _anchor;
+        }
+        angle = _newAngle;
+        axis = _axis;
+        Debug.Log(anchor + " " + axis + " " + _newNormal);
+        StartCoroutine(Roll(anchor, axis, _newNormal));
+
     }
 
     // void keysPriorityControls2() {
@@ -268,16 +291,24 @@ public class MovePlayer : MonoBehaviour {
     // }
 
 
-    void RollUp() {
-        StartCoroutine(Roll(transform.position + primaryAxis * 0.5f - surfaceNormal * 0.5f, secondaryAxis, primaryAxis));
+    void RollUp(out Vector3 _anchor, out Vector3 _axis, out Vector3 _newNormal) {
+        _anchor = toVec + primaryAxis * 0.5f - surfaceNormal * 0.5f;
+        _axis = secondaryAxis;
+        _newNormal = primaryAxis;
     }
-    void RollDown() {
-        StartCoroutine(Roll(transform.position - primaryAxis * 0.5f - surfaceNormal * 0.5f, -secondaryAxis, -primaryAxis));
+    void RollDown(out Vector3 _anchor, out Vector3 _axis, out Vector3 _newNormal) {
+        _anchor = toVec - primaryAxis * 0.5f - surfaceNormal * 0.5f;
+        _axis = -secondaryAxis;
+        _newNormal = -primaryAxis;
     }
-    void RollRight() {
-        StartCoroutine(Roll(transform.position + secondaryAxis * 0.5f - surfaceNormal * 0.5f, -primaryAxis, secondaryAxis));
+    void RollRight(out Vector3 _anchor, out Vector3 _axis, out Vector3 _newNormal) {
+        _anchor = toVec + secondaryAxis * 0.5f - surfaceNormal * 0.5f;
+        _axis = -primaryAxis;
+        _newNormal = secondaryAxis;
     }
-    void RollLeft() {
-        StartCoroutine(Roll(transform.position - secondaryAxis * 0.5f - surfaceNormal * 0.5f, primaryAxis, -secondaryAxis));
+    void RollLeft(out Vector3 _anchor, out Vector3 _axis, out Vector3 _newNormal) {
+        _anchor = toVec - secondaryAxis * 0.5f - surfaceNormal * 0.5f;
+        _axis = primaryAxis;
+        _newNormal = -secondaryAxis;
     }
 }

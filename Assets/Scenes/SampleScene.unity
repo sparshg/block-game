@@ -1348,7 +1348,6 @@ MonoBehaviour:
   surfaceNormal: {x: 0, y: 1, z: 0}
   primaryAxis: {x: 0, y: 0, z: 1}
   secondaryAxis: {x: 1, y: 0, z: 0}
-  toVec: {x: 0, y: 0, z: 0}
   burstClip: {fileID: 8300000, guid: e21e40859382042ba8e4a783b5496691, type: 3}
   damageClip: {fileID: 8300000, guid: 5bad86d369557417fae8d0c015cd1115, type: 3}
   camMat: {fileID: 2100000, guid: 4b87dabd6eb624e2cbaa8d78119c75c6, type: 2}
@@ -1407,7 +1406,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  startingPos: {x: 3, y: 2}
+  startingPos: {x: 2, y: 2}
   rotateCurve:
     serializedVersion: 2
     m_Curve:
@@ -1432,7 +1431,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  rotateSpeed: 300
+  rotateSpeed: 100
   camRotateSpeed: 10
   cam: {fileID: 107153818}
   magnitude: 5
@@ -2598,7 +2597,6 @@ MonoBehaviour:
   surfaceNormal: {x: 0, y: 1, z: 0}
   primaryAxis: {x: 0, y: 0, z: 1}
   secondaryAxis: {x: 1, y: 0, z: 0}
-  toVec: {x: 0, y: 0, z: 0}
   burstClip: {fileID: 8300000, guid: e21e40859382042ba8e4a783b5496691, type: 3}
   damageClip: {fileID: 8300000, guid: 5bad86d369557417fae8d0c015cd1115, type: 3}
   camMat: {fileID: 2100000, guid: eec9eb04bce1b4bb2a029457700f2c8e, type: 2}
@@ -2682,7 +2680,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  rotateSpeed: 300
+  rotateSpeed: 100
   camRotateSpeed: 10
   cam: {fileID: 1715143606}
   magnitude: 5
