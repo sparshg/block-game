@@ -146,8 +146,9 @@ public class MovePlayer : MonoBehaviour {
         }
     }
 
-    public bool CheckBelow() {
+    public bool CheckBelow(out string tag) {
         bool didHit = Physics.Raycast(transform.position, -surfaceNormal, out RaycastHit hit, 2f);
+        tag = (didHit) ? hit.collider.tag : null;
         if (!didHit || !hit.collider.gameObject.CompareTag("Grid")) {
             return false;
         }
@@ -188,8 +189,12 @@ public class MovePlayer : MonoBehaviour {
             if (_angle >= angle) break;
             if (!checkedBelow && t > 0.7f) {
                 checkedBelow = true;
-                if (!CheckBelow()) {
-                    Burst();
+                if (!CheckBelow(out string tag)) {
+                    if (tag == "Player" && !shield) {
+                        player.Burst();
+                    } else {
+                        Burst();
+                    }
                 }
             }
             // Quaternion.RotateTowards(transform.rotation, Quaternion.identity, _angle)
