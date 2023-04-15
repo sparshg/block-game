@@ -1406,7 +1406,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  startingPos: {x: 2, y: 2}
+  startingPos: {x: 8, y: 8}
   rotateCurve:
     serializedVersion: 2
     m_Curve:
@@ -1443,6 +1443,7 @@ MonoBehaviour:
   player: {fileID: 0}
   shield: 0
   isMoving: 0
+  pushedOther: 0
   health: 0
   damage: 0.2
   hue: 0
@@ -2692,6 +2693,7 @@ MonoBehaviour:
   player: {fileID: 0}
   shield: 0
   isMoving: 0
+  pushedOther: 0
   health: 0
   damage: 0.2
   hue: 0

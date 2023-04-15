@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using TMPro;
 public enum PowerupType {
     None,
     SpeedBoost,
@@ -28,6 +28,9 @@ public class Gameplay : MonoBehaviour {
     private float[] te, tr, explodeWaitTime, rebuildWaitTime;
 
     void Awake() {
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 60;
+        Screen.SetResolution(1440, 900, true);
         if (Pref.I.twoPlayers) {
             cam1.rect = new Rect(0.5f, 0f, 0.5f, 1f);
             cam2.rect = new Rect(0f, 0f, 0.5f, 1f);
@@ -74,6 +77,13 @@ public class Gameplay : MonoBehaviour {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
     void Update() {
+        if (player1.pushedOther) {
+            player2.ControlledUpdate();
+            player1.ControlledUpdate();
+        } else {
+            player1.ControlledUpdate();
+            player2.ControlledUpdate();
+        }
         for (int i = 0; i < explodeInstances; i++) {
             te[i] += Time.deltaTime;
             if (te[i] > explodeWaitTime[i]) {

@@ -63,7 +63,7 @@ public class MovePlayer : MonoBehaviour {
     private AudioSource audioSource;
     private float matT = 0;
     public MovePlayer player;
-    public bool shield, isMoving = false;
+    public bool shield, isMoving = false, pushedOther = false;
     public float health, damage, hue;
     private Gameplay manager;
     // void OnGUI() {
@@ -112,7 +112,7 @@ public class MovePlayer : MonoBehaviour {
         }
     }
 
-    void Update() {
+    public void ControlledUpdate() {
         if (controls == Controls.KeyboardPriority)
             keysPriorityControls();
         else
@@ -165,6 +165,8 @@ public class MovePlayer : MonoBehaviour {
             _rotateSpeed *= 2f;
             cam.SetIntermediateRotation(surfaceNormal);
             if (player && player.toVec == toVec && !player.shield) {
+                pushedOther = true;
+                player.pushedOther = false;
                 player.InterruptRoll(anchor - surfaceNormal, axis, -surfaceNormal);
                 player.health += damage;
                 audioSource.PlayOneShot(damageClip);
@@ -172,6 +174,8 @@ public class MovePlayer : MonoBehaviour {
         } else {
             toVec += toNorm;
             if (player && player.toVec == toVec && !player.shield) {
+                pushedOther = true;
+                player.pushedOther = false;
                 player.InterruptRoll(anchor + newNormal, axis, newNormal);
                 player.health += damage;
                 audioSource.PlayOneShot(damageClip);
