@@ -13,7 +13,7 @@ public class MovePlayer : MonoBehaviour {
     [HideInInspector] public Vector3 surfaceNormal = Vector3.up;
     [HideInInspector] public Vector3 primaryAxis = Vector3.forward;
     [HideInInspector] public Vector3 secondaryAxis = Vector3.right;
-    private Vector3 toVec, anchor, axis;
+    private Vector3 toVec, anchor, axis, toNorm;
     private float angle = 90f, _angle = 0f;
 
     [SerializeField] private AudioClip burstClip, damageClip;
@@ -99,6 +99,7 @@ public class MovePlayer : MonoBehaviour {
     void Start() {
         transform.localPosition = new Vector3(startingPos.x, Pref.I.size, startingPos.y);
         toVec = transform.position;
+        toNorm = surfaceNormal;
         mat = GetComponent<Renderer>().material;
         audioSource = cam.GetComponent<AudioSource>();
         Color.RGBToHSV(matColor, out hue, out _, out _);
@@ -160,6 +161,7 @@ public class MovePlayer : MonoBehaviour {
         float _rotateSpeed = rotateSpeed, t1 = rotateCurve.Evaluate(0), t;
         Vector3 belowCube = toVec - newNormal;
         if (toVec.x == Pref.I.size || toVec.y == Pref.I.size || toVec.z == Pref.I.size || toVec.x < 0 || toVec.y < 0 || toVec.z < 0) {
+            toNorm = newNormal;
             _rotateSpeed *= 2f;
             cam.SetIntermediateRotation(surfaceNormal);
             if (player && player.toVec == toVec && !player.shield) {
@@ -168,14 +170,13 @@ public class MovePlayer : MonoBehaviour {
                 audioSource.PlayOneShot(damageClip);
             }
         } else {
-            toVec += surfaceNormal;
+            toVec += toNorm;
             if (player && player.toVec == toVec && !player.shield) {
                 player.InterruptRoll(anchor + newNormal, axis, newNormal);
                 player.health += damage;
                 audioSource.PlayOneShot(damageClip);
             }
         }
-
 
         while (true) {
             _angle += _rotateSpeed * Time.deltaTime;
@@ -190,13 +191,12 @@ public class MovePlayer : MonoBehaviour {
             // Quaternion.RotateTowards(transform.rotation, Quaternion.identity, _angle)
             transform.RotateAround(anchor, axis, (t - t1) * angle);
             t1 = t;
-            if (angle == 180f) surfaceNormal = (transform.position - belowCube).normalized;
+            if (toNorm != surfaceNormal) surfaceNormal = (transform.position - belowCube).normalized;
             yield return null;
         }
         transform.position = toVec;
+        surfaceNormal = toNorm;
         transform.rotation = Quaternion.identity;
-        if (angle == 180f)
-            surfaceNormal = newNormal;
 
         yield return null;
         isMoving = false;
@@ -232,20 +232,20 @@ public class MovePlayer : MonoBehaviour {
 
     void InterruptRoll(Vector3 _anchor, Vector3 _axis, Vector3 _newNormal) {
         float _newAngle = 90f;
-        toVec += _newNormal - surfaceNormal;
+        toVec += _newNormal - toNorm;
         if (toVec.x == Pref.I.size || toVec.y == Pref.I.size || toVec.z == Pref.I.size || toVec.x < 0 || toVec.y < 0 || toVec.z < 0) {
             _newAngle = 180f;
         }
         if (isMoving) {
             StopAllCoroutines();
             (Quaternion.AngleAxis(_newAngle, _axis) * Quaternion.AngleAxis(angle - rotateCurve.Evaluate(_angle / angle) * angle, axis)).ToAngleAxis(out _newAngle, out _axis);
-            anchor += _newNormal * 0.5f;
+            if (axis != -_axis) anchor += _newNormal * 0.5f;
         } else {
             anchor = _anchor;
         }
+
         angle = _newAngle;
         axis = _axis;
-        Debug.Log(anchor + " " + axis + " " + _newNormal);
         StartCoroutine(Roll(anchor, axis, _newNormal));
 
     }

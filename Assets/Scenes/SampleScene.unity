@@ -1431,7 +1431,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  rotateSpeed: 100
+  rotateSpeed: 300
   camRotateSpeed: 10
   cam: {fileID: 107153818}
   magnitude: 5
@@ -2680,7 +2680,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  rotateSpeed: 100
+  rotateSpeed: 300
   camRotateSpeed: 10
   cam: {fileID: 1715143606}
   magnitude: 5
