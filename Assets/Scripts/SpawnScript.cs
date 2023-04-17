@@ -14,7 +14,7 @@ public class SpawnScript : MonoBehaviour {
     }
 
     IEnumerator SpawnPowerups() {
-        while (powerupCount < maxPowerups) {
+        while (true) {
             // generate a random location within the grid
             Vector3 spawnPos = new Vector3(Random.Range(0, Pref.I.size), Random.Range(0, Pref.I.size), Random.Range(0, Pref.I.size));
             int a = Random.Range(0, 6);

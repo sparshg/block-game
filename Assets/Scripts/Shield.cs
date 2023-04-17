@@ -31,7 +31,7 @@ public class Shield : MonoBehaviour {
         }
         if (!target) {
             if (removeShield) player.shield = false;
-            if (!player.isMoving && !player.CheckBelow()) player.Burst();
+            if (!player.isMoving && !player.CheckBelow(out _)) player.Burst();
             Destroy(gameObject);
         }
     }

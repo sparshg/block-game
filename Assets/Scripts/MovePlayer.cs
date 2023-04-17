@@ -13,21 +13,25 @@ public class MovePlayer : MonoBehaviour {
     [HideInInspector] public Vector3 surfaceNormal = Vector3.up;
     [HideInInspector] public Vector3 primaryAxis = Vector3.forward;
     [HideInInspector] public Vector3 secondaryAxis = Vector3.right;
+    private Vector3 toVec, anchor, axis, toNorm;
+    private float angle = 90f, _angle = 0f;
 
     [SerializeField] private AudioClip burstClip, damageClip;
     public Material camMat;
+    [ColorUsageAttribute(false, true)]
+    public Color matColor;
     // private KeyCode lockKey = KeyCode.None;
     // private Vector3 lockPrimAxis, lockSecAxis, lockNormal;
 
     [Header("Keys")]
-    [SerializeField] private KeyCode upKey;
-    [SerializeField] private KeyCode downKey;
-    [SerializeField] private KeyCode leftKey;
-    [SerializeField] private KeyCode rightKey;
-    [SerializeField] private KeyCode leftRot;
-    [SerializeField] private KeyCode rightRot;
-    [SerializeField] private KeyCode upRot;
-    [SerializeField] private KeyCode downRot;
+    public KeyCode upKey;
+    public KeyCode downKey;
+    public KeyCode leftKey;
+    public KeyCode rightKey;
+    public KeyCode leftRot;
+    public KeyCode rightRot;
+    public KeyCode upRot;
+    public KeyCode downRot;
     public Controls controls;
 
     [Header("Edge")]
@@ -54,13 +58,13 @@ public class MovePlayer : MonoBehaviour {
     [SerializeField] private float fadeInTime;
     [SerializeField] private float fadeOutTime;
 
-    private float toAngleX, toAngleY = -20;
+    [SerializeField] private float toAngleX, toAngleY = -20;
     private Material mat;
     private AudioSource audioSource;
     private float matT = 0;
     public MovePlayer player;
-    public bool shield, isMoving = false;
-    public float health, damage;
+    public bool shield, isMoving = false, pushedOther = false;
+    public float health, damage, hue;
     private Gameplay manager;
     // void OnGUI() {
     //     if (GUI.Button(new Rect(0, 20, 100, 20), "Burst")) {
@@ -94,15 +98,21 @@ public class MovePlayer : MonoBehaviour {
 
     void Start() {
         transform.localPosition = new Vector3(startingPos.x, Pref.I.size, startingPos.y);
+        toVec = transform.position;
+        toNorm = surfaceNormal;
         mat = GetComponent<Renderer>().material;
         audioSource = cam.GetComponent<AudioSource>();
-        camMat.SetColor("_Color", Color.black);
+        Color.RGBToHSV(matColor, out hue, out _, out _);
+        camMat.SetColor("_Color", Color.HSVToRGB(hue, 1, 0));
+        mat.SetColor("_Color", matColor);
         manager = GameObject.FindGameObjectWithTag("GameController").GetComponent<Gameplay>();
-        if (Pref.I.twoPlayers)
+        if (Pref.I.twoPlayers) {
+            health = 0.1f;
             player = GameObject.FindGameObjectsWithTag("Player").Where(x => x != gameObject).First().GetComponent<MovePlayer>();
+        }
     }
 
-    void Update() {
+    public void ControlledUpdate() {
         if (controls == Controls.KeyboardPriority)
             keysPriorityControls();
         else
@@ -116,18 +126,18 @@ public class MovePlayer : MonoBehaviour {
                 matT += Time.deltaTime * edgeSpeed;
                 mat.SetFloat("_Intensity", edgeCurve.Evaluate(matT) * edgeIntensity);
                 mat.SetFloat("_w", 1 - edgeCurve.Evaluate(matT) * edgeWidth);
-                camMat.SetColor("_Color", new Color(edgeCurve.Evaluate(matT), 0, 0, 1));
+                camMat.SetColor("_Color", Color.HSVToRGB(hue, 1, edgeCurve.Evaluate(matT)));
             }
         } else if (matT > health) {
             matT = Mathf.Max(health, matT - Time.deltaTime * edgeSpeed);
             mat.SetFloat("_Intensity", edgeCurve.Evaluate(matT) * edgeIntensity);
             mat.SetFloat("_w", 1 - edgeCurve.Evaluate(matT) * edgeWidth);
-            camMat.SetColor("_Color", new Color(edgeCurve.Evaluate(matT), 0, 0, 1));
+            camMat.SetColor("_Color", Color.HSVToRGB(hue, 1, edgeCurve.Evaluate(matT)));
         } else if (matT < health) {
             matT = Mathf.Min(health, matT + Time.deltaTime * edgeSpeed);
             mat.SetFloat("_Intensity", edgeCurve.Evaluate(matT) * edgeIntensity);
             mat.SetFloat("_w", 1 - edgeCurve.Evaluate(matT) * edgeWidth);
-            camMat.SetColor("_Color", new Color(edgeCurve.Evaluate(matT), 0, 0, 1));
+            camMat.SetColor("_Color", Color.HSVToRGB(hue, 1, edgeCurve.Evaluate(matT)));
         }
         if (matT >= 1) {
             matT = 0;
@@ -136,8 +146,9 @@ public class MovePlayer : MonoBehaviour {
         }
     }
 
-    public bool CheckBelow() {
+    public bool CheckBelow(out string tag) {
         bool didHit = Physics.Raycast(transform.position, -surfaceNormal, out RaycastHit hit, 2f);
+        tag = (didHit) ? hit.collider.tag : null;
         if (!didHit || !hit.collider.gameObject.CompareTag("Grid")) {
             return false;
         }
@@ -147,22 +158,26 @@ public class MovePlayer : MonoBehaviour {
     public IEnumerator Roll(Vector3 anchor, Vector3 axis, Vector3 newNormal) {
         isMoving = true;
         bool checkedBelow = false;
-        float angle = 90f, _angle = 0f, _rotateSpeed = rotateSpeed, t1 = rotateCurve.Evaluate(0), t;
-        Vector3 belowCube = transform.position - surfaceNormal;
-        Vector3 toVec = belowCube + newNormal;
+        _angle = 0f;
+        float _rotateSpeed = rotateSpeed, t1 = rotateCurve.Evaluate(0), t;
+        Vector3 belowCube = toVec - newNormal;
         if (toVec.x == Pref.I.size || toVec.y == Pref.I.size || toVec.z == Pref.I.size || toVec.x < 0 || toVec.y < 0 || toVec.z < 0) {
-            angle = 180f;
+            toNorm = newNormal;
             _rotateSpeed *= 2f;
             cam.SetIntermediateRotation(surfaceNormal);
-            if (player && player.transform.position == toVec) {
-                StartCoroutine(player.Roll(anchor - surfaceNormal, axis, -surfaceNormal));
+            if (player && player.toVec == toVec && !player.shield) {
+                pushedOther = true;
+                player.pushedOther = false;
+                player.InterruptRoll(anchor - surfaceNormal, axis, -surfaceNormal);
                 player.health += damage;
                 audioSource.PlayOneShot(damageClip);
             }
         } else {
-            toVec += surfaceNormal;
-            if (player && player.transform.position == toVec) {
-                StartCoroutine(player.Roll(anchor + newNormal, axis, newNormal));
+            toVec += toNorm;
+            if (player && player.toVec == toVec && !player.shield) {
+                pushedOther = true;
+                player.pushedOther = false;
+                player.InterruptRoll(anchor + newNormal, axis, newNormal);
                 player.health += damage;
                 audioSource.PlayOneShot(damageClip);
             }
@@ -174,19 +189,23 @@ public class MovePlayer : MonoBehaviour {
             if (_angle >= angle) break;
             if (!checkedBelow && t > 0.7f) {
                 checkedBelow = true;
-                if (!CheckBelow()) {
-                    Burst();
+                if (!CheckBelow(out string tag)) {
+                    if (tag == "Player" && !shield) {
+                        player.Burst();
+                    } else {
+                        Burst();
+                    }
                 }
             }
+            // Quaternion.RotateTowards(transform.rotation, Quaternion.identity, _angle)
             transform.RotateAround(anchor, axis, (t - t1) * angle);
             t1 = t;
-            if (angle == 180f) surfaceNormal = (transform.position - belowCube).normalized;
+            if (toNorm != surfaceNormal) surfaceNormal = (transform.position - belowCube).normalized;
             yield return null;
         }
         transform.position = toVec;
+        surfaceNormal = toNorm;
         transform.rotation = Quaternion.identity;
-        if (angle == 180f)
-            surfaceNormal = newNormal;
 
         yield return null;
         isMoving = false;
@@ -201,22 +220,43 @@ public class MovePlayer : MonoBehaviour {
         else if (Input.GetKeyUp(upRot) || Input.GetKeyUp(downRot)) toAngleY = 0f;
 
         cam.turn.x = Mathf.LerpAngle(cam.turn.x, toAngleX, Time.deltaTime * camRotateSpeed);
-        cam.turn.y = Mathf.Lerp(cam.turn.y, toAngleY, Time.deltaTime * camRotateSpeed);
+        cam.turn.y = Mathf.Lerp(cam.turn.y, toAngleY - 20f, Time.deltaTime * camRotateSpeed);
 
-        if (isMoving) return;
-
-        if (Input.GetKey(upKey)) RollUp();
-        else if (Input.GetKey(downKey)) RollDown();
-        else if (Input.GetKey(rightKey)) RollRight();
-        else if (Input.GetKey(leftKey)) RollLeft();
+        mousePriorityControls();
     }
 
     void mousePriorityControls() {
         if (isMoving) return;
-        if (Input.GetKey(upKey)) RollUp();
-        else if (Input.GetKey(downKey)) RollDown();
-        else if (Input.GetKey(rightKey)) RollRight();
-        else if (Input.GetKey(leftKey)) RollLeft();
+        Vector3 _newNormal;
+        if (Input.GetKey(upKey)) RollUp(out anchor, out axis, out _newNormal);
+        else if (Input.GetKey(downKey)) RollDown(out anchor, out axis, out _newNormal);
+        else if (Input.GetKey(rightKey)) RollRight(out anchor, out axis, out _newNormal);
+        else if (Input.GetKey(leftKey)) RollLeft(out anchor, out axis, out _newNormal);
+        else return;
+        toVec += _newNormal - surfaceNormal;
+        if (toVec.x == Pref.I.size || toVec.y == Pref.I.size || toVec.z == Pref.I.size || toVec.x < 0 || toVec.y < 0 || toVec.z < 0) angle = 180f;
+        else angle = 90f;
+        StartCoroutine(Roll(anchor, axis, _newNormal));
+    }
+
+    void InterruptRoll(Vector3 _anchor, Vector3 _axis, Vector3 _newNormal) {
+        float _newAngle = 90f;
+        toVec += _newNormal - toNorm;
+        if (toVec.x == Pref.I.size || toVec.y == Pref.I.size || toVec.z == Pref.I.size || toVec.x < 0 || toVec.y < 0 || toVec.z < 0) {
+            _newAngle = 180f;
+        }
+        if (isMoving) {
+            StopAllCoroutines();
+            (Quaternion.AngleAxis(_newAngle, _axis) * Quaternion.AngleAxis(angle - rotateCurve.Evaluate(_angle / angle) * angle, axis)).ToAngleAxis(out _newAngle, out _axis);
+            if (axis != -_axis) anchor += _newNormal * 0.5f;
+        } else {
+            anchor = _anchor;
+        }
+
+        angle = _newAngle;
+        axis = _axis;
+        StartCoroutine(Roll(anchor, axis, _newNormal));
+
     }
 
     // void keysPriorityControls2() {
@@ -260,16 +300,24 @@ public class MovePlayer : MonoBehaviour {
     // }
 
 
-    void RollUp() {
-        StartCoroutine(Roll(transform.position + primaryAxis * 0.5f - surfaceNormal * 0.5f, secondaryAxis, primaryAxis));
+    void RollUp(out Vector3 _anchor, out Vector3 _axis, out Vector3 _newNormal) {
+        _anchor = toVec + primaryAxis * 0.5f - surfaceNormal * 0.5f;
+        _axis = secondaryAxis;
+        _newNormal = primaryAxis;
     }
-    void RollDown() {
-        StartCoroutine(Roll(transform.position - primaryAxis * 0.5f - surfaceNormal * 0.5f, -secondaryAxis, -primaryAxis));
+    void RollDown(out Vector3 _anchor, out Vector3 _axis, out Vector3 _newNormal) {
+        _anchor = toVec - primaryAxis * 0.5f - surfaceNormal * 0.5f;
+        _axis = -secondaryAxis;
+        _newNormal = -primaryAxis;
     }
-    void RollRight() {
-        StartCoroutine(Roll(transform.position + secondaryAxis * 0.5f - surfaceNormal * 0.5f, -primaryAxis, secondaryAxis));
+    void RollRight(out Vector3 _anchor, out Vector3 _axis, out Vector3 _newNormal) {
+        _anchor = toVec + secondaryAxis * 0.5f - surfaceNormal * 0.5f;
+        _axis = -primaryAxis;
+        _newNormal = secondaryAxis;
     }
-    void RollLeft() {
-        StartCoroutine(Roll(transform.position - secondaryAxis * 0.5f - surfaceNormal * 0.5f, primaryAxis, -secondaryAxis));
+    void RollLeft(out Vector3 _anchor, out Vector3 _axis, out Vector3 _newNormal) {
+        _anchor = toVec - secondaryAxis * 0.5f - surfaceNormal * 0.5f;
+        _axis = primaryAxis;
+        _newNormal = -secondaryAxis;
     }
 }
