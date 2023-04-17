@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using TMPro;
+using UnityEngine.UI;
 public enum PowerupType {
     None,
     SpeedBoost,
@@ -15,7 +15,8 @@ public class Gameplay : MonoBehaviour {
     [SerializeField] private float explodeTime, rebuildMultiplier;
     [SerializeField] private Camera cam1, cam2;
     [SerializeField] private MovePlayer player1, player2;
-
+    [SerializeField] private Sprite resume, pause;
+    [SerializeField] private Image img;
     [SerializeField] private int explodeInstances, rebuildInstances;
     private Vector3[] randomVectors = new Vector3[] {
         Vector3.up,
@@ -28,9 +29,9 @@ public class Gameplay : MonoBehaviour {
     private float[] te, tr, explodeWaitTime, rebuildWaitTime;
 
     void Awake() {
-        QualitySettings.vSyncCount = 0;
+/*        QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
-        Screen.SetResolution(1440, 900, true);
+        Screen.SetResolution(1440, 900, true);*/
         if (Pref.I.twoPlayers) {
             cam1.rect = new Rect(0.5f, 0f, 0.5f, 1f);
             cam2.rect = new Rect(0f, 0f, 0.5f, 1f);
@@ -68,6 +69,20 @@ public class Gameplay : MonoBehaviour {
             rebuildWaitTime[i] = Random.Range(0f, explodeTime) * rebuildMultiplier;
         }
     }
+
+    public void ChangeImage()
+    {
+        if(img.sprite == resume)
+        {
+            img.sprite = pause;
+            Time.timeScale = 0;
+        }
+        else
+        {
+            img.sprite = resume;
+            Time.timeScale = 1f;
+        }
+    }
     public void MainMenuNow()
     {
         SceneManager.LoadScene(1);
@@ -84,12 +99,16 @@ public class Gameplay : MonoBehaviour {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
     void Update() {
-        if (player1.pushedOther) {
-            player2.ControlledUpdate();
-            player1.ControlledUpdate();
+        if (Pref.I.twoPlayers) {
+            if (player1.pushedOther) {
+                player2.ControlledUpdate();
+                player1.ControlledUpdate();
+            } else {
+                player1.ControlledUpdate();
+                player2.ControlledUpdate();
+            }
         } else {
             player1.ControlledUpdate();
-            player2.ControlledUpdate();
         }
         for (int i = 0; i < explodeInstances; i++) {
             te[i] += Time.deltaTime;

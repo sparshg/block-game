@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using EZCameraShake;
 using UnityEngine;
+using TMPro;
 
 public class PowerupPlayer : MonoBehaviour {
 
+
     // public CameraShakeInstance cameraShakePresets;
     [Header("Powerup")]
+    [SerializeField] private TMP_Text scoreText;
     [SerializeField] private AnimationCurve curve;
     [SerializeField] private float speed;
     [Header("Powerup Shake")]
@@ -36,7 +39,7 @@ public class PowerupPlayer : MonoBehaviour {
     private CamFollow camFollow;
     private Explode explode;
     private Skybox sky;
-    private int speedCount = 0, shieldCount = 0;
+    private int speedCount = 0, shieldCount = 0, score = 0;
     private float initFov;
     private Vector3[] randomVectors = new Vector3[] {
         Vector3.up,
@@ -74,6 +77,7 @@ public class PowerupPlayer : MonoBehaviour {
         audioSource = GetComponent<AudioSource>();
         initFov = cam.fieldOfView;
         player.camMat.SetFloat("_RippleAmount", 0f);
+        if (Pref.I.twoPlayers) scoreText.gameObject.SetActive(false);
 
     }
 
@@ -177,6 +181,7 @@ public class PowerupPlayer : MonoBehaviour {
                         break;
                 }
                 // inventorySystem.AddItem(other.gameObject);
+                if (!Pref.I.twoPlayers) scoreText.text = (++score).ToString();
                 Destroy(other.gameObject);
             }
         }
