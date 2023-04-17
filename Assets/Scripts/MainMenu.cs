@@ -5,13 +5,27 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour {
     // Start is called before the first frame update
-    public void StartGame() {
-        SceneManager.LoadScene("SampleScene");
+    public GameObject c1, c2;
 
+    public void BackButton()
+    {
+        c1.SetActive(true);
+        c2.SetActive(false);
+    }
+
+    public void HelpScreen()
+    {
+        c1.SetActive(false);
+        c2.SetActive(true);    }
+    public void StartGameSinglePlayer() {
+        SceneManager.LoadScene(0);
+    }
+    public void StartGameTwoPlayer()
+    {
+        SceneManager.LoadScene(0);
     }
     public void QuitGame()
     {
-        Debug.Log("quit");
         Application.Quit();
     }
 }
