@@ -32,7 +32,7 @@ public class Gameplay : MonoBehaviour {
     void Awake() {
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
-        Screen.SetResolution(1440, 900, true);
+        // Screen.SetResolution(1440, 900, true);
         if (Pref.I.twoPlayers) {
             cam1.rect = new Rect(0.5f, 0f, 0.5f, 1f);
             cam2.rect = new Rect(0f, 0f, 0.5f, 1f);
@@ -89,8 +89,7 @@ public class Gameplay : MonoBehaviour {
     }
     public void MainMenuNow() {
         Time.timeScale = 1;
-
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(0);
     }
     public void RestartNow() {
         Time.timeScale = 1;
