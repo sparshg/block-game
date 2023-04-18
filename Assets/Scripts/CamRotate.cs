@@ -16,7 +16,7 @@ public class CamRotate : MonoBehaviour {
     }
 
     void Update() {
-        if (player.controls == Controls.MousePriority) {
+        if (!Cursor.visible && player.controls == Controls.MousePriority) {
             turn.x += Input.GetAxis("Mouse X") * sensitivity;
             turn.x %= 360;
             turn.y += Input.GetAxis("Mouse Y") * sensitivity;

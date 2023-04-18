@@ -15,7 +15,8 @@ public class Gameplay : MonoBehaviour {
     [SerializeField] private float explodeTime, rebuildMultiplier;
     [SerializeField] private Camera cam1, cam2;
     [SerializeField] private MovePlayer player1, player2;
-    [SerializeField] private Sprite resume, pause;
+    [SerializeField] private GameObject score2;
+    [SerializeField] private Sprite play, pause;
     [SerializeField] private Image img;
     [SerializeField] private int explodeInstances, rebuildInstances;
     private Vector3[] randomVectors = new Vector3[] {
@@ -46,13 +47,15 @@ public class Gameplay : MonoBehaviour {
             player1.controls = Controls.KeyboardPriority;
             cam2.transform.parent.parent.gameObject.SetActive(true);
             player2.gameObject.SetActive(true);
+            score2.SetActive(true);
         } else {
             cam1.rect = new Rect(0f, 0f, 1f, 1f);
             cam2.transform.parent.parent.gameObject.SetActive(false);
             player2.gameObject.SetActive(false);
+            score2.SetActive(false);
         }
-        // Cursor.visible = false;
-        // Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
 
         explode = GetComponent<Explode>();
         explodeWaitTime = new float[explodeInstances];
@@ -71,18 +74,26 @@ public class Gameplay : MonoBehaviour {
     }
 
     public void ChangeImage() {
-        if (img.sprite == resume) {
+        if (img.sprite == play) {
             img.sprite = pause;
-            Time.timeScale = 0;
+            Time.timeScale = 1;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
         } else {
-            img.sprite = resume;
-            Time.timeScale = 1f;
+            img.sprite = play;
+            Time.timeScale = 0;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
     }
     public void MainMenuNow() {
+        Time.timeScale = 1;
+
         SceneManager.LoadScene(1);
     }
     public void RestartNow() {
+        Time.timeScale = 1;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
     public void RestartGame() {
@@ -90,6 +101,7 @@ public class Gameplay : MonoBehaviour {
     }
     public IEnumerator Restart() {
         yield return new WaitForSeconds(2f);
+        Time.timeScale = 1;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
     void Update() {
@@ -104,6 +116,11 @@ public class Gameplay : MonoBehaviour {
         } else {
             player1.ControlledUpdate();
         }
+
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            ChangeImage();
+        }
+
         for (int i = 0; i < explodeInstances; i++) {
             te[i] += Time.deltaTime;
             if (te[i] > explodeWaitTime[i]) {

@@ -62,7 +62,8 @@ public class MovePlayer : MonoBehaviour {
     private Material mat;
     private AudioSource audioSource;
     private float matT = 0;
-    public MovePlayer player;
+    [SerializeField] private MovePlayer player;
+    private PowerupPlayer playerPow;
     public bool shield, isMoving = false, pushedOther = false;
     public float health, damage, hue;
     private Gameplay manager;
@@ -75,6 +76,12 @@ public class MovePlayer : MonoBehaviour {
     public void Burst(bool checkShield = true, Material material = null) {
         if (checkShield && shield) return;
         CameraShaker.ShakeAll(magnitude, roughness, fadeInTime, fadeOutTime);
+        if (player) {
+            if (player.name == "Player1")
+                Pref.I.score1++;
+            else if (player.name == "Player2")
+                Pref.I.score2++;
+        }
         manager.RestartGame();
         gameObject.SetActive(false);
         foreach (var i in CameraShaker.instanceList.Values) {
@@ -105,6 +112,7 @@ public class MovePlayer : MonoBehaviour {
         Color.RGBToHSV(matColor, out hue, out _, out _);
         camMat.SetColor("_Color", Color.HSVToRGB(hue, 1, 0));
         mat.SetColor("_Color", matColor);
+        if (player) playerPow = player.GetComponent<PowerupPlayer>();
         manager = GameObject.FindGameObjectWithTag("GameController").GetComponent<Gameplay>();
         if (Pref.I.twoPlayers) {
             health = 0.1f;

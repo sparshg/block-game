@@ -22,6 +22,8 @@ public class MainMenu : MonoBehaviour {
     }
     public void StartGameTwoPlayer() {
         Pref.I.twoPlayers = true;
+        Pref.I.score1 = 0;
+        Pref.I.score2 = 0;
         SceneManager.LoadScene(0);
     }
     public void QuitGame() {

@@ -9,7 +9,7 @@ public class PowerupPlayer : MonoBehaviour {
 
     // public CameraShakeInstance cameraShakePresets;
     [Header("Powerup")]
-    [SerializeField] private TMP_Text scoreText;
+    public TMP_Text scoreText;
     [SerializeField] private AnimationCurve curve;
     [SerializeField] private float speed;
     [Header("Powerup Shake")]
@@ -39,7 +39,8 @@ public class PowerupPlayer : MonoBehaviour {
     private CamFollow camFollow;
     private Explode explode;
     private Skybox sky;
-    private int speedCount = 0, shieldCount = 0, score = 0;
+    private int speedCount = 0, shieldCount = 0;
+    public int score = 0;
     private float initFov;
     private Vector3[] randomVectors = new Vector3[] {
         Vector3.up,
@@ -76,9 +77,8 @@ public class PowerupPlayer : MonoBehaviour {
         camFollow = player.cam.transform.parent.GetComponent<CamFollow>();
         audioSource = GetComponent<AudioSource>();
         initFov = cam.fieldOfView;
+        if (Pref.I.twoPlayers) scoreText.text = player.name == "Player1" ? Pref.I.score1.ToString() : Pref.I.score2.ToString();
         player.camMat.SetFloat("_RippleAmount", 0f);
-        if (Pref.I.twoPlayers) scoreText.gameObject.SetActive(false);
-
     }
 
     IEnumerator Rebuild() {
