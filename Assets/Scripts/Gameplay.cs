@@ -29,9 +29,9 @@ public class Gameplay : MonoBehaviour {
     private float[] te, tr, explodeWaitTime, rebuildWaitTime;
 
     void Awake() {
-/*        QualitySettings.vSyncCount = 0;
+        QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
-        Screen.SetResolution(1440, 900, true);*/
+        Screen.SetResolution(1440, 900, true);
         if (Pref.I.twoPlayers) {
             cam1.rect = new Rect(0.5f, 0f, 0.5f, 1f);
             cam2.rect = new Rect(0f, 0f, 0.5f, 1f);
@@ -70,25 +70,19 @@ public class Gameplay : MonoBehaviour {
         }
     }
 
-    public void ChangeImage()
-    {
-        if(img.sprite == resume)
-        {
+    public void ChangeImage() {
+        if (img.sprite == resume) {
             img.sprite = pause;
             Time.timeScale = 0;
-        }
-        else
-        {
+        } else {
             img.sprite = resume;
             Time.timeScale = 1f;
         }
     }
-    public void MainMenuNow()
-    {
+    public void MainMenuNow() {
         SceneManager.LoadScene(1);
     }
-    public void RestartNow()
-    {
+    public void RestartNow() {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
     public void RestartGame() {
