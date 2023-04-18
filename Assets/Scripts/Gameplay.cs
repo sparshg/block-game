@@ -32,7 +32,19 @@ public class Gameplay : MonoBehaviour {
     void Awake() {
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
-        // Screen.SetResolution(1440, 900, true);
+        switch ((float)Screen.width / Screen.height) {
+            case 16f / 9f:
+                Screen.SetResolution(1280, 720, true);
+                break;
+            case 1.6f:
+                Screen.SetResolution(1280, 800, true);
+                break;
+            default:
+                Screen.SetResolution((int)(Screen.width * 0.75f), (int)(Screen.height * 0.75f), true);
+                break;
+        }
+
+
         if (Pref.I.twoPlayers) {
             cam1.rect = new Rect(0.5f, 0f, 0.5f, 1f);
             cam2.rect = new Rect(0f, 0f, 0.5f, 1f);
